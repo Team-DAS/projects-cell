@@ -27,7 +27,7 @@ bin/
 # ------------------------------
 .gradle/
 **/build/
-!gradle/wrapper/gradle-wrapper.jar
+!projects-service/gradle/wrapper/gradle-wrapper.jar
 gradle-app.setting
 
 # Gradle local properties
