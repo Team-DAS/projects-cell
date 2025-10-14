@@ -1,0 +1,47 @@
+networks:
+  # Red privada para la comunicación interna de la célula de proyectos
+  projects-network:
+    driver: bridge
+  # Red compartida para conectarse a la célula de observabilidad
+  infrastructure-network:
+    external: true
+    name: infrastructure-network
+
+volumes:
+  postgres-projects-data:
+    driver: local
+
+services:
+  # --- Base de Datos dedicada para la Célula de Proyectos ---
+  postgres_projects:
+    image: postgres:15-alpine
+    container_name: postgres_projects
+    restart: unless-stopped
+    ports:
+      - "5433:5432" # Puerto del host diferente para no chocar con otras BD
+    volumes:
+      - postgres-projects-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=projects_db
+      - POSTGRES_USER=projects_user
+      - POSTGRES_PASSWORD=projects_password
+    networks:
+      - projects-network # La BD se mantiene aislada en su red privada
+
+  # --- Microservicios de la Célula de Proyectos (Conectados a ambas redes) ---
+
+  projects-service:
+    build:
+      context: ./projects-service
+    container_name: projects-service
+    restart: unless-stopped
+    networks:
+      - projects-network
+      - infrastructure-network # <-- Conectado a la red compartida
+    depends_on:
+      - postgres_projects
+    environment:
+      - SERVER_PORT=8071
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres_projects:5432/projects_db
+      - SPRING_DATASOURCE_USERNAME=projects_user
+      - SPRING_DATASOURCE_PASSWORD=projects_password

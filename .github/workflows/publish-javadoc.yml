@@ -1,0 +1,55 @@
+name: Build and Deploy Javadocs by Microservice
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '**.java'
+  workflow_dispatch: # Permite ejecución manual
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-deploy-javadocs:
+    runs-on: ubuntu-latest
+
+    # --- AQUÍ ESTÁ LA MAGIA ---
+    # Define la lista de tus microservicios
+    strategy:
+      matrix:
+        # Añade aquí los nombres de las carpetas de tus microservicios
+        service: ['projects-service']
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'gradle'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+        # Se ejecuta dentro de la carpeta de cada microservicio
+        working-directory: ./${{ matrix.service }}
+
+      - name: Generate Javadoc for ${{ matrix.service }}
+        run: ./gradlew javadoc
+        # Le decimos a la Action que trabaje dentro de la carpeta del microservicio
+        working-directory: ./${{ matrix.service }}
+
+      - name: Deploy ${{ matrix.service }} Javadoc to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          # La carpeta de salida del Javadoc de este microservicio
+          publish_dir: ./${{ matrix.service }}/build/docs/javadoc
+          # Publica en un subdirectorio con el nombre del servicio
+          destination_dir: ./${{ matrix.service }}
+          # Importante: permite que los jobs no se sobrescriban entre sí
+          keep_files: true

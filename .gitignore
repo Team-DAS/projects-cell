@@ -1,0 +1,157 @@
+# ==========================================
+# 🧩 Monorepo - Identity Cell
+# ==========================================
+
+# ------------------------------
+# Java & Spring Boot
+# ------------------------------
+*.class
+*.jar
+*.war
+*.ear
+*.log
+*.tmp
+*.swp
+*.bak
+
+# ------------------------------
+# Build directories
+# ------------------------------
+target/
+build/
+out/
+bin/
+
+# ------------------------------
+# Gradle
+# ------------------------------
+.gradle/
+**/build/
+!gradle/wrapper/gradle-wrapper.jar
+gradle-app.setting
+
+# Gradle local properties
+gradle.properties
+**/gradle.properties
+
+# ------------------------------
+# Maven
+# ------------------------------
+.mvn/
+mvnw
+mvnw.cmd
+!/.mvn/wrapper/maven-wrapper.jar
+
+# ------------------------------
+# IDE / Editor Configs
+# ------------------------------
+# IntelliJ IDEA
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Eclipse
+.project
+.classpath
+.settings/
+.springBeans
+
+# VS Code
+.vscode/
+.history/
+*.code-workspace
+
+# NetBeans
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+
+# ------------------------------
+# System / OS Files
+# ------------------------------
+.DS_Store
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+# ------------------------------
+# Docker
+# ------------------------------
+docker-compose.override.yml
+*.env
+.env.*
+.env.local
+**/.docker/
+**/Dockerfile.dev
+**/Dockerfile.local
+
+# ------------------------------
+# Logs & Temp files
+# ------------------------------
+*.log
+logs/
+**/logs/
+*.out
+tmp/
+temp/
+**/tmp/
+
+# ------------------------------
+# Node.js (por si algún frontend o dashboard se incluye)
+# ------------------------------
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.tsbuildinfo
+
+# ------------------------------
+# Test & Coverage
+# ------------------------------
+*.pid
+*.seed
+*.orig
+*.rej
+*.coverage
+coverage/
+test-output/
+reports/
+**/reports/
+jacoco.exec
+
+# ------------------------------
+# Backup / Cache
+# ------------------------------
+.cache/
+.caches/
+**/.gradle/
+**/.idea/
+**/.classpath
+**/.project
+**/.settings/
+**/Thumbs.db
+**/.factorypath
+
+# ------------------------------
+# Kubernetes / Helm / CI
+# ------------------------------
+*.yaml.backup
+*.yml.backup
+charts/.dependencies/
+*.tgz
+
+# ------------------------------
+# Custom local scripts/configs
+# ------------------------------
+local/
+scripts/local/
+.env.dev
+.env.test
+.env.prod
+*.local.yml
+*.override.yml
