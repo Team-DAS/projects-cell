@@ -6,14 +6,12 @@ import java.util.List;
 import java.util.UUID;
 
 import com.udeajobs.projects_cell.projects_service.enums.ProjectStatus;
+
 import lombok.Data;
 
 /**
  * DTO para las respuestas de la API de proyectos.
  * Contiene toda la información del proyecto que se mostrará al cliente.
- *
- * @param projectId Identificador único público del proyecto (UUID)
- * @param employerId Identificador del empleador que creó el proyecto
  */
 @Data
 public class ProjectResponseDTO {
