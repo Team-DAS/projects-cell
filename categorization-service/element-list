@@ -1,0 +1,11 @@
+com.udeajobs.projects_cell.categorization_service
+com.udeajobs.projects_cell.categorization_service.config
+com.udeajobs.projects_cell.categorization_service.controller
+com.udeajobs.projects_cell.categorization_service.dto
+com.udeajobs.projects_cell.categorization_service.entity
+com.udeajobs.projects_cell.categorization_service.enums
+com.udeajobs.projects_cell.categorization_service.events.dto
+com.udeajobs.projects_cell.categorization_service.exception
+com.udeajobs.projects_cell.categorization_service.mapper
+com.udeajobs.projects_cell.categorization_service.repository
+com.udeajobs.projects_cell.categorization_service.service
