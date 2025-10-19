@@ -20,7 +20,7 @@ jobs:
     strategy:
       matrix:
         # Añade aquí los nombres de las carpetas de tus microservicios
-        service: ['projects-service']
+        service: ['projects-service', 'categorization-service']
 
     steps:
       - name: Checkout code
