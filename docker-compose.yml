@@ -1,8 +1,7 @@
 networks:
-  # Red privada para la comunicación interna de la célula de proyectos
   projects-network:
     driver: bridge
-  # Red compartida para conectarse a la célula de observabilidad
+    name: projects-network
   infrastructure-network:
     external: true
     name: infrastructure-network
@@ -10,15 +9,17 @@ networks:
 volumes:
   postgres-projects-data:
     driver: local
+  postgres-categorization-data:
+    driver: local
 
 services:
-  # --- Base de Datos dedicada para la Célula de Proyectos ---
+  # --- Base de Datos para Projects Service ---
   postgres_projects:
     image: postgres:15-alpine
     container_name: postgres_projects
     restart: unless-stopped
     ports:
-      - "5433:5432" # Puerto del host diferente para no chocar con otras BD
+      - "5433:5432"
     volumes:
       - postgres-projects-data:/var/lib/postgresql/data
     environment:
@@ -26,18 +27,36 @@ services:
       - POSTGRES_USER=projects_user
       - POSTGRES_PASSWORD=projects_password
     networks:
-      - projects-network # La BD se mantiene aislada en su red privada
+      - projects-network
 
-  # --- Microservicios de la Célula de Proyectos (Conectados a ambas redes) ---
+  # --- Base de Datos para Categorization Service ---
+  postgres_categorization:
+    image: postgres:15-alpine
+    container_name: postgres_categorization
+    restart: unless-stopped
+    ports:
+      - "5434:5432" # Puerto diferente
+    volumes:
+      - postgres-categorization-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=categorization_db
+      - POSTGRES_USER=categorization_user
+      - POSTGRES_PASSWORD=categorization_password
+    networks:
+      - projects-network
+
+  # --- Microservicios ---
 
   projects-service:
     build:
       context: ./projects-service
     container_name: projects-service
     restart: unless-stopped
+    ports:
+      - "8071:8071"
     networks:
       - projects-network
-      - infrastructure-network # <-- Conectado a la red compartida
+      - infrastructure-network
     depends_on:
       - postgres_projects
     environment:
@@ -45,3 +64,22 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres_projects:5432/projects_db
       - SPRING_DATASOURCE_USERNAME=projects_user
       - SPRING_DATASOURCE_PASSWORD=projects_password
+
+  categorization-service:
+    build:
+      context: ./categorization-service
+    container_name: categorization-service
+    restart: unless-stopped
+    ports:
+      - "8072:8072"
+    networks:
+      - projects-network
+      - infrastructure-network
+    depends_on:
+      - postgres_categorization
+    environment:
+      - SERVER_PORT=8072
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres_categorization:5432/categorization_db
+      - SPRING_DATASOURCE_USERNAME=categorization_user
+      - SPRING_DATASOURCE_PASSWORD=categorization_password
+      - RABBITMQ_HOST=rabbitmq-udeajobs
