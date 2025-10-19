@@ -3,6 +3,8 @@ package com.udeajobs.projects_cell.categorization_service.service;
 import com.udeajobs.projects_cell.categorization_service.dto.CategoryRequestDTO;
 import com.udeajobs.projects_cell.categorization_service.dto.CategoryResponseDTO;
 import com.udeajobs.projects_cell.categorization_service.enums.CategoryType;
+import com.udeajobs.projects_cell.categorization_service.exception.DuplicateResourceException;
+import com.udeajobs.projects_cell.categorization_service.exception.ResourceNotFoundException;
 
 import java.util.List;
 import java.util.UUID;
@@ -67,4 +69,3 @@ public interface CategoryService {
      */
     void deleteCategory(UUID categoryId);
 }
-
