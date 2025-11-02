@@ -21,6 +21,10 @@ public interface ProjectMapper {
      * @param requestDTO el DTO de solicitud a convertir
      * @return la entidad Project correspondiente
      */
+    @Mapping(target = "projectId", ignore = true)
+    @Mapping(target = "status", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
     Project toProject(ProjectRequestDTO requestDTO);
 
     /**
@@ -38,5 +42,9 @@ public interface ProjectMapper {
      * @param dto el DTO con los nuevos datos
      * @param project la entidad Project a actualizar
      */
+    @Mapping(target = "projectId", ignore = true)
+    @Mapping(target = "status", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
     void updateProjectFromDto(ProjectRequestDTO dto, @MappingTarget Project project);
 }

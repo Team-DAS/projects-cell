@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -14,10 +12,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.udeajobs.projects_cell.projects_service.dto.ProjectRequestDTO;
 import com.udeajobs.projects_cell.projects_service.dto.ProjectResponseDTO;
 import com.udeajobs.projects_cell.projects_service.entity.Project;
-import com.udeajobs.projects_cell.projects_service.enums.ProjectStatus;
 import com.udeajobs.projects_cell.projects_service.exception.ResourceNotFoundException;
 import com.udeajobs.projects_cell.projects_service.mapper.ProjectMapper;
 import com.udeajobs.projects_cell.projects_service.repository.ProjectRepository;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Implementación del servicio de proyectos.
@@ -32,6 +32,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     private final ProjectRepository projectRepository;
     private final ProjectMapper projectMapper;
+    private final ProjectEventPublisher eventPublisher;
 
     /**
      * {@inheritDoc}
@@ -44,6 +45,9 @@ public class ProjectServiceImpl implements ProjectService {
         try {
             Project project = projectMapper.toProject(projectDTO);
             Project savedProject = projectRepository.save(project);
+
+            // Publicar evento de proyecto creado
+            eventPublisher.publishProjectCreated(savedProject);
 
             logger.info("Proyecto con UUID {} creado exitosamente", savedProject.getProjectId());
             return projectMapper.toProjectResponseDTO(savedProject);
@@ -112,6 +116,9 @@ public class ProjectServiceImpl implements ProjectService {
             projectMapper.updateProjectFromDto(projectDTO, existingProject);
             Project updatedProject = projectRepository.save(existingProject);
 
+            // Publicar evento de proyecto actualizado
+            eventPublisher.publishProjectUpdated(updatedProject);
+
             logger.info("Proyecto con UUID {} actualizado exitosamente", projectId);
             return projectMapper.toProjectResponseDTO(updatedProject);
         } catch (ResourceNotFoundException e) {
@@ -131,12 +138,17 @@ public class ProjectServiceImpl implements ProjectService {
         logger.info("Eliminando proyecto con UUID: {}", projectId);
 
         try {
-            if (!projectRepository.existsById(projectId)) {
-                logger.error("Proyecto con UUID {} no encontrado para eliminación", projectId);
-                throw new ResourceNotFoundException("Proyecto con ID " + projectId + " no encontrado");
-            }
+            Project project = projectRepository.findById(projectId)
+                    .orElseThrow(() -> {
+                        logger.error("Proyecto con UUID {} no encontrado para eliminación", projectId);
+                        return new ResourceNotFoundException("Proyecto con ID " + projectId + " no encontrado");
+                    });
 
             projectRepository.deleteById(projectId);
+            
+            // Publicar evento de proyecto eliminado
+            eventPublisher.publishProjectDeleted(project);
+
             logger.info("Proyecto con UUID {} eliminado exitosamente", projectId);
         } catch (ResourceNotFoundException e) {
             throw e;
