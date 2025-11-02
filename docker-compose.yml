@@ -35,7 +35,7 @@ services:
     container_name: postgres_categorization
     restart: unless-stopped
     ports:
-      - "5434:5432" # Puerto diferente
+      - "5434:5432"
     volumes:
       - postgres-categorization-data:/var/lib/postgresql/data
     environment:
@@ -64,6 +64,14 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres_projects:5432/projects_db
       - SPRING_DATASOURCE_USERNAME=projects_user
       - SPRING_DATASOURCE_PASSWORD=projects_password
+      - SPRING_RABBITMQ_HOST=rabbitmq-udeajobs
+      - SPRING_RABBITMQ_PORT=5672
+      - SPRING_RABBITMQ_USERNAME=guest
+      - SPRING_RABBITMQ_PASSWORD=guest
+      - APP_RABBITMQ_PROJECT_EVENTS_EXCHANGE=project.events.exchange
+      - APP_RABBITMQ_ROUTING_KEY_CREATED=project.created
+      - APP_RABBITMQ_ROUTING_KEY_UPDATED=project.updated
+      - APP_RABBITMQ_ROUTING_KEY_DELETED=project.deleted
 
   categorization-service:
     build:
@@ -82,4 +90,10 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres_categorization:5432/categorization_db
       - SPRING_DATASOURCE_USERNAME=categorization_user
       - SPRING_DATASOURCE_PASSWORD=categorization_password
-      - RABBITMQ_HOST=rabbitmq-udeajobs
+      - SPRING_RABBITMQ_HOST=rabbitmq-udeajobs
+      - SPRING_RABBITMQ_USERNAME=guest
+      - SPRING_RABBITMQ_PASSWORD=guest
+      - APP_RABBITMQ_CATEGORIZATION_EVENTS_EXCHANGE=categorization.events.exchange
+      - APP_RABBITMQ_ROUTING_KEY_CREATED=categorization.created
+      - APP_RABBITMQ_ROUTING_KEY_UPDATED=categorization.updated
+      - APP_RABBITMQ_ROUTING_KEY_DELETED=categorization.deleted
