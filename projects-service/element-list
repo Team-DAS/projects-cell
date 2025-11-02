@@ -1,8 +1,10 @@
 com.udeajobs.projects_cell.projects_service
+com.udeajobs.projects_cell.projects_service.config
 com.udeajobs.projects_cell.projects_service.controller
 com.udeajobs.projects_cell.projects_service.dto
 com.udeajobs.projects_cell.projects_service.entity
 com.udeajobs.projects_cell.projects_service.enums
+com.udeajobs.projects_cell.projects_service.events.dto
 com.udeajobs.projects_cell.projects_service.exception
 com.udeajobs.projects_cell.projects_service.mapper
 com.udeajobs.projects_cell.projects_service.repository
