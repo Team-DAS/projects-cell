@@ -49,16 +49,7 @@ loadScripts(document, 'script');</script>
 <div class="header">
 <h1>Index</h1>
 </div>
-<a href="#I:B">B</a>&nbsp;<a href="#I:C">C</a>&nbsp;<a href="#I:D">D</a>&nbsp;<a href="#I:E">E</a>&nbsp;<a href="#I:F">F</a>&nbsp;<a href="#I:G">G</a>&nbsp;<a href="#I:H">H</a>&nbsp;<a href="#I:I">I</a>&nbsp;<a href="#I:J">J</a>&nbsp;<a href="#I:M">M</a>&nbsp;<a href="#I:P">P</a>&nbsp;<a href="#I:R">R</a>&nbsp;<a href="#I:S">S</a>&nbsp;<a href="#I:T">T</a>&nbsp;<a href="#I:U">U</a>&nbsp;<a href="#I:V">V</a>&nbsp;<br><a href="allclasses-index.html">All&nbsp;Classes&nbsp;and&nbsp;Interfaces</a><span class="vertical-separator">|</span><a href="allpackages-index.html">All&nbsp;Packages</a><span class="vertical-separator">|</span><a href="serialized-form.html">Serialized&nbsp;Form</a>
-<h2 class="title" id="I:B">B</h2>
-<dl class="index">
-<dt><a href="com/udeajobs/projects_cell/categorization_service/config/RabbitMQConfig.html#bindingProjectCreated(org.springframework.amqp.core.Queue,org.springframework.amqp.core.TopicExchange)" class="member-name-link">bindingProjectCreated(Queue, TopicExchange)</a> - Method in class com.udeajobs.projects_cell.categorization_service.config.<a href="com/udeajobs/projects_cell/categorization_service/config/RabbitMQConfig.html" title="class in com.udeajobs.projects_cell.categorization_service.config">RabbitMQConfig</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="com/udeajobs/projects_cell/categorization_service/config/RabbitMQConfig.html#bindingProjectDeleted(org.springframework.amqp.core.Queue,org.springframework.amqp.core.TopicExchange)" class="member-name-link">bindingProjectDeleted(Queue, TopicExchange)</a> - Method in class com.udeajobs.projects_cell.categorization_service.config.<a href="com/udeajobs/projects_cell/categorization_service/config/RabbitMQConfig.html" title="class in com.udeajobs.projects_cell.categorization_service.config">RabbitMQConfig</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="com/udeajobs/projects_cell/categorization_service/config/RabbitMQConfig.html#bindingProjectUpdated(org.springframework.amqp.core.Queue,org.springframework.amqp.core.TopicExchange)" class="member-name-link">bindingProjectUpdated(Queue, TopicExchange)</a> - Method in class com.udeajobs.projects_cell.categorization_service.config.<a href="com/udeajobs/projects_cell/categorization_service/config/RabbitMQConfig.html" title="class in com.udeajobs.projects_cell.categorization_service.config">RabbitMQConfig</a></dt>
-<dd>&nbsp;</dd>
-</dl>
+<a href="#I:C">C</a>&nbsp;<a href="#I:D">D</a>&nbsp;<a href="#I:E">E</a>&nbsp;<a href="#I:F">F</a>&nbsp;<a href="#I:G">G</a>&nbsp;<a href="#I:H">H</a>&nbsp;<a href="#I:I">I</a>&nbsp;<a href="#I:J">J</a>&nbsp;<a href="#I:M">M</a>&nbsp;<a href="#I:P">P</a>&nbsp;<a href="#I:R">R</a>&nbsp;<a href="#I:S">S</a>&nbsp;<a href="#I:T">T</a>&nbsp;<a href="#I:U">U</a>&nbsp;<a href="#I:V">V</a>&nbsp;<br><a href="allclasses-index.html">All&nbsp;Classes&nbsp;and&nbsp;Interfaces</a><span class="vertical-separator">|</span><a href="allpackages-index.html">All&nbsp;Packages</a><span class="vertical-separator">|</span><a href="serialized-form.html">Serialized&nbsp;Form</a>
 <h2 class="title" id="I:C">C</h2>
 <dl class="index">
 <dt><a href="com/udeajobs/projects_cell/categorization_service/CategorizationServiceApplication.html" class="type-name-link" title="class in com.udeajobs.projects_cell.categorization_service">CategorizationServiceApplication</a> - Class in <a href="com/udeajobs/projects_cell/categorization_service/package-summary.html">com.udeajobs.projects_cell.categorization_service</a></dt>
@@ -83,12 +74,20 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/udeajobs/projects_cell/categorization_service/events/dto/CategoryEventDTO.html#%3Cinit%3E()" class="member-name-link">CategoryEventDTO()</a> - Constructor for class com.udeajobs.projects_cell.categorization_service.events.dto.<a href="com/udeajobs/projects_cell/categorization_service/events/dto/CategoryEventDTO.html" title="class in com.udeajobs.projects_cell.categorization_service.events.dto">CategoryEventDTO</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/udeajobs/projects_cell/categorization_service/service/CategoryEventPublisher.html" class="type-name-link" title="class in com.udeajobs.projects_cell.categorization_service.service">CategoryEventPublisher</a> - Class in <a href="com/udeajobs/projects_cell/categorization_service/service/package-summary.html">com.udeajobs.projects_cell.categorization_service.service</a></dt>
+<dd>
+<div class="block">Servicio para publicar eventos de categorias en RabbitMQ.</div>
+</dd>
+<dt><a href="com/udeajobs/projects_cell/categorization_service/service/CategoryEventPublisher.html#%3Cinit%3E()" class="member-name-link">CategoryEventPublisher()</a> - Constructor for class com.udeajobs.projects_cell.categorization_service.service.<a href="com/udeajobs/projects_cell/categorization_service/service/CategoryEventPublisher.html" title="class in com.udeajobs.projects_cell.categorization_service.service">CategoryEventPublisher</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/udeajobs/projects_cell/categorization_service/config/RabbitMQConfig.html#categoryEventsExchange()" class="member-name-link">categoryEventsExchange()</a> - Method in class com.udeajobs.projects_cell.categorization_service.config.<a href="com/udeajobs/projects_cell/categorization_service/config/RabbitMQConfig.html" title="class in com.udeajobs.projects_cell.categorization_service.config">RabbitMQConfig</a></dt>
+<dd>
+<div class="block">Define el exchange de tipo Topic donde se publicarán los eventos.</div>
+</dd>
 <dt><a href="com/udeajobs/projects_cell/categorization_service/mapper/CategoryMapper.html" class="type-name-link" title="interface in com.udeajobs.projects_cell.categorization_service.mapper">CategoryMapper</a> - Interface in <a href="com/udeajobs/projects_cell/categorization_service/mapper/package-summary.html">com.udeajobs.projects_cell.categorization_service.mapper</a></dt>
 <dd>
 <div class="block">Mapper de MapStruct para convertir entre entidades Category y DTOs.</div>
 </dd>
-<dt><a href="com/udeajobs/projects_cell/categorization_service/config/RabbitMQConfig.html#categoryQueue()" class="member-name-link">categoryQueue()</a> - Method in class com.udeajobs.projects_cell.categorization_service.config.<a href="com/udeajobs/projects_cell/categorization_service/config/RabbitMQConfig.html" title="class in com.udeajobs.projects_cell.categorization_service.config">RabbitMQConfig</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="com/udeajobs/projects_cell/categorization_service/repository/CategoryRepository.html" class="type-name-link" title="interface in com.udeajobs.projects_cell.categorization_service.repository">CategoryRepository</a> - Interface in <a href="com/udeajobs/projects_cell/categorization_service/repository/package-summary.html">com.udeajobs.projects_cell.categorization_service.repository</a></dt>
 <dd>
 <div class="block">Repositorio JPA para gestionar operaciones de base de datos de Category.</div>
@@ -113,10 +112,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Implementación del servicio de categorías.</div>
 </dd>
-<dt><a href="com/udeajobs/projects_cell/categorization_service/service/CategoryServiceImpl.html#%3Cinit%3E(com.udeajobs.projects_cell.categorization_service.repository.CategoryRepository,com.udeajobs.projects_cell.categorization_service.mapper.CategoryMapper,org.springframework.amqp.rabbit.core.RabbitTemplate)" class="member-name-link">CategoryServiceImpl(CategoryRepository, CategoryMapper, RabbitTemplate)</a> - Constructor for class com.udeajobs.projects_cell.categorization_service.service.<a href="com/udeajobs/projects_cell/categorization_service/service/CategoryServiceImpl.html" title="class in com.udeajobs.projects_cell.categorization_service.service">CategoryServiceImpl</a></dt>
-<dd>
-<div class="block">Constructor con inyección de dependencias.</div>
-</dd>
+<dt><a href="com/udeajobs/projects_cell/categorization_service/service/CategoryServiceImpl.html#%3Cinit%3E()" class="member-name-link">CategoryServiceImpl()</a> - Constructor for class com.udeajobs.projects_cell.categorization_service.service.<a href="com/udeajobs/projects_cell/categorization_service/service/CategoryServiceImpl.html" title="class in com.udeajobs.projects_cell.categorization_service.service">CategoryServiceImpl</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/udeajobs/projects_cell/categorization_service/enums/CategoryType.html" class="type-name-link" title="enum class in com.udeajobs.projects_cell.categorization_service.enums">CategoryType</a> - Enum Class in <a href="com/udeajobs/projects_cell/categorization_service/enums/package-summary.html">com.udeajobs.projects_cell.categorization_service.enums</a></dt>
 <dd>
 <div class="block">Enum que representa los diferentes tipos de categorías en el sistema.</div>
@@ -275,11 +272,17 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Industria o sector (ej: Technology, Healthcare, Finance)</div>
 </dd>
+<dt><a href="com/udeajobs/projects_cell/categorization_service/config/RabbitMQConfig.html#initializeRabbitMQ(org.springframework.amqp.rabbit.core.RabbitAdmin)" class="member-name-link">initializeRabbitMQ(RabbitAdmin)</a> - Method in class com.udeajobs.projects_cell.categorization_service.config.<a href="com/udeajobs/projects_cell/categorization_service/config/RabbitMQConfig.html" title="class in com.udeajobs.projects_cell.categorization_service.config">RabbitMQConfig</a></dt>
+<dd>
+<div class="block">Inicializa RabbitMQ creando los recursos definidos al arrancar la aplicación.</div>
+</dd>
 </dl>
 <h2 class="title" id="I:J">J</h2>
 <dl class="index">
 <dt><a href="com/udeajobs/projects_cell/categorization_service/config/RabbitMQConfig.html#jackson2JsonMessageConverter()" class="member-name-link">jackson2JsonMessageConverter()</a> - Method in class com.udeajobs.projects_cell.categorization_service.config.<a href="com/udeajobs/projects_cell/categorization_service/config/RabbitMQConfig.html" title="class in com.udeajobs.projects_cell.categorization_service.config">RabbitMQConfig</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Convertidor de mensajes JSON para serialización/deserialización automática.</div>
+</dd>
 <dt><a href="com/udeajobs/projects_cell/categorization_service/enums/CategoryType.html#JOB_LEVEL" class="member-name-link">JOB_LEVEL</a> - Enum constant in enum class com.udeajobs.projects_cell.categorization_service.enums.<a href="com/udeajobs/projects_cell/categorization_service/enums/CategoryType.html" title="enum class in com.udeajobs.projects_cell.categorization_service.enums">CategoryType</a></dt>
 <dd>
 <div class="block">Nivel de experiencia laboral (ej: Junior, Senior, Expert)</div>
@@ -292,21 +295,35 @@ loadScripts(document, 'script');</script>
 </dl>
 <h2 class="title" id="I:P">P</h2>
 <dl class="index">
-<dt><a href="com/udeajobs/projects_cell/categorization_service/config/RabbitMQConfig.html#projectEventsExchange()" class="member-name-link">projectEventsExchange()</a> - Method in class com.udeajobs.projects_cell.categorization_service.config.<a href="com/udeajobs/projects_cell/categorization_service/config/RabbitMQConfig.html" title="class in com.udeajobs.projects_cell.categorization_service.config">RabbitMQConfig</a></dt>
-<dd>&nbsp;</dd>
+<dt><a href="com/udeajobs/projects_cell/categorization_service/service/CategoryEventPublisher.html#publishCategoryCreated(com.udeajobs.projects_cell.categorization_service.entity.Category)" class="member-name-link">publishCategoryCreated(Category)</a> - Method in class com.udeajobs.projects_cell.categorization_service.service.<a href="com/udeajobs/projects_cell/categorization_service/service/CategoryEventPublisher.html" title="class in com.udeajobs.projects_cell.categorization_service.service">CategoryEventPublisher</a></dt>
+<dd>
+<div class="block">Publica un evento de categoria creada.</div>
+</dd>
+<dt><a href="com/udeajobs/projects_cell/categorization_service/service/CategoryEventPublisher.html#publishCategoryDeleted(com.udeajobs.projects_cell.categorization_service.entity.Category)" class="member-name-link">publishCategoryDeleted(Category)</a> - Method in class com.udeajobs.projects_cell.categorization_service.service.<a href="com/udeajobs/projects_cell/categorization_service/service/CategoryEventPublisher.html" title="class in com.udeajobs.projects_cell.categorization_service.service">CategoryEventPublisher</a></dt>
+<dd>
+<div class="block">Publica un evento de categoria eliminada.</div>
+</dd>
+<dt><a href="com/udeajobs/projects_cell/categorization_service/service/CategoryEventPublisher.html#publishCategoryUpdated(com.udeajobs.projects_cell.categorization_service.entity.Category)" class="member-name-link">publishCategoryUpdated(Category)</a> - Method in class com.udeajobs.projects_cell.categorization_service.service.<a href="com/udeajobs/projects_cell/categorization_service/service/CategoryEventPublisher.html" title="class in com.udeajobs.projects_cell.categorization_service.service">CategoryEventPublisher</a></dt>
+<dd>
+<div class="block">Publica un evento de categoria actualizada.</div>
+</dd>
 </dl>
 <h2 class="title" id="I:R">R</h2>
 <dl class="index">
 <dt><a href="com/udeajobs/projects_cell/categorization_service/config/RabbitMQConfig.html#rabbitAdmin(org.springframework.amqp.rabbit.connection.ConnectionFactory)" class="member-name-link">rabbitAdmin(ConnectionFactory)</a> - Method in class com.udeajobs.projects_cell.categorization_service.config.<a href="com/udeajobs/projects_cell/categorization_service/config/RabbitMQConfig.html" title="class in com.udeajobs.projects_cell.categorization_service.config">RabbitMQConfig</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="com/udeajobs/projects_cell/categorization_service/config/RabbitMQConfig.html#rabbitListenerContainerFactory(org.springframework.amqp.rabbit.connection.ConnectionFactory,org.springframework.amqp.support.converter.Jackson2JsonMessageConverter)" class="member-name-link">rabbitListenerContainerFactory(ConnectionFactory, Jackson2JsonMessageConverter)</a> - Method in class com.udeajobs.projects_cell.categorization_service.config.<a href="com/udeajobs/projects_cell/categorization_service/config/RabbitMQConfig.html" title="class in com.udeajobs.projects_cell.categorization_service.config">RabbitMQConfig</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Administrador de RabbitMQ para crear exchanges, colas y bindings automáticamente.</div>
+</dd>
 <dt><a href="com/udeajobs/projects_cell/categorization_service/config/RabbitMQConfig.html" class="type-name-link" title="class in com.udeajobs.projects_cell.categorization_service.config">RabbitMQConfig</a> - Class in <a href="com/udeajobs/projects_cell/categorization_service/config/package-summary.html">com.udeajobs.projects_cell.categorization_service.config</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Configuración de RabbitMQ para el servicio de categorias.</div>
+</dd>
 <dt><a href="com/udeajobs/projects_cell/categorization_service/config/RabbitMQConfig.html#%3Cinit%3E()" class="member-name-link">RabbitMQConfig()</a> - Constructor for class com.udeajobs.projects_cell.categorization_service.config.<a href="com/udeajobs/projects_cell/categorization_service/config/RabbitMQConfig.html" title="class in com.udeajobs.projects_cell.categorization_service.config">RabbitMQConfig</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="com/udeajobs/projects_cell/categorization_service/config/RabbitMQConfig.html#rabbitTemplate(org.springframework.amqp.rabbit.connection.ConnectionFactory,org.springframework.amqp.support.converter.Jackson2JsonMessageConverter)" class="member-name-link">rabbitTemplate(ConnectionFactory, Jackson2JsonMessageConverter)</a> - Method in class com.udeajobs.projects_cell.categorization_service.config.<a href="com/udeajobs/projects_cell/categorization_service/config/RabbitMQConfig.html" title="class in com.udeajobs.projects_cell.categorization_service.config">RabbitMQConfig</a></dt>
-<dd>&nbsp;</dd>
+<dt><a href="com/udeajobs/projects_cell/categorization_service/config/RabbitMQConfig.html#rabbitTemplate(org.springframework.amqp.rabbit.connection.ConnectionFactory,org.springframework.amqp.support.converter.MessageConverter)" class="member-name-link">rabbitTemplate(ConnectionFactory, MessageConverter)</a> - Method in class com.udeajobs.projects_cell.categorization_service.config.<a href="com/udeajobs/projects_cell/categorization_service/config/RabbitMQConfig.html" title="class in com.udeajobs.projects_cell.categorization_service.config">RabbitMQConfig</a></dt>
+<dd>
+<div class="block">Template de RabbitMQ configurado con el convertidor JSON.</div>
+</dd>
 <dt><a href="com/udeajobs/projects_cell/categorization_service/exception/ResourceNotFoundException.html" class="type-name-link" title="class in com.udeajobs.projects_cell.categorization_service.exception">ResourceNotFoundException</a> - Exception Class in <a href="com/udeajobs/projects_cell/categorization_service/exception/package-summary.html">com.udeajobs.projects_cell.categorization_service.exception</a></dt>
 <dd>
 <div class="block">Excepción lanzada cuando no se encuentra un recurso solicitado.</div>
@@ -319,8 +336,6 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Constructor con mensaje y causa.</div>
 </dd>
-<dt><a href="com/udeajobs/projects_cell/categorization_service/config/RabbitMQConfig.html#runner(org.springframework.amqp.rabbit.core.RabbitAdmin)" class="member-name-link">runner(RabbitAdmin)</a> - Method in class com.udeajobs.projects_cell.categorization_service.config.<a href="com/udeajobs/projects_cell/categorization_service/config/RabbitMQConfig.html" title="class in com.udeajobs.projects_cell.categorization_service.config">RabbitMQConfig</a></dt>
-<dd>&nbsp;</dd>
 </dl>
 <h2 class="title" id="I:S">S</h2>
 <dl class="index">
@@ -379,7 +394,7 @@ loadScripts(document, 'script');</script>
 the order they are declared.</div>
 </dd>
 </dl>
-<a href="#I:B">B</a>&nbsp;<a href="#I:C">C</a>&nbsp;<a href="#I:D">D</a>&nbsp;<a href="#I:E">E</a>&nbsp;<a href="#I:F">F</a>&nbsp;<a href="#I:G">G</a>&nbsp;<a href="#I:H">H</a>&nbsp;<a href="#I:I">I</a>&nbsp;<a href="#I:J">J</a>&nbsp;<a href="#I:M">M</a>&nbsp;<a href="#I:P">P</a>&nbsp;<a href="#I:R">R</a>&nbsp;<a href="#I:S">S</a>&nbsp;<a href="#I:T">T</a>&nbsp;<a href="#I:U">U</a>&nbsp;<a href="#I:V">V</a>&nbsp;<br><a href="allclasses-index.html">All&nbsp;Classes&nbsp;and&nbsp;Interfaces</a><span class="vertical-separator">|</span><a href="allpackages-index.html">All&nbsp;Packages</a><span class="vertical-separator">|</span><a href="serialized-form.html">Serialized&nbsp;Form</a></main>
+<a href="#I:C">C</a>&nbsp;<a href="#I:D">D</a>&nbsp;<a href="#I:E">E</a>&nbsp;<a href="#I:F">F</a>&nbsp;<a href="#I:G">G</a>&nbsp;<a href="#I:H">H</a>&nbsp;<a href="#I:I">I</a>&nbsp;<a href="#I:J">J</a>&nbsp;<a href="#I:M">M</a>&nbsp;<a href="#I:P">P</a>&nbsp;<a href="#I:R">R</a>&nbsp;<a href="#I:S">S</a>&nbsp;<a href="#I:T">T</a>&nbsp;<a href="#I:U">U</a>&nbsp;<a href="#I:V">V</a>&nbsp;<br><a href="allclasses-index.html">All&nbsp;Classes&nbsp;and&nbsp;Interfaces</a><span class="vertical-separator">|</span><a href="allpackages-index.html">All&nbsp;Packages</a><span class="vertical-separator">|</span><a href="serialized-form.html">Serialized&nbsp;Form</a></main>
 </div>
 </div>
 </body>
