@@ -1,101 +1,69 @@
 package com.udeajobs.projects_cell.categorization_service.config;
 
-import org.springframework.amqp.core.Binding;
-import org.springframework.amqp.core.BindingBuilder;
-import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
-import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
+import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * Configuración de RabbitMQ para el servicio de categorias.
+ * Este servicio publica eventos cuando se crean, actualizan o eliminan categorias.
+ */
 @Configuration
 public class RabbitMQConfig {
 
-    // --- Valores obtenidos desde application.properties ---
-    @Value("${app.rabbitmq.project-events-exchange}")
-    private String projectEventsExchange;
+    @Value("${app.rabbitmq.category-events-exchange}")
+    private String categoryEventsExchange;
 
-    @Value("${app.rabbitmq.routing-key.created}")
-    private String routingKeyCreated;
-
-    @Value("${app.rabbitmq.routing-key.updated}")
-    private String routingKeyUpdated;
-
-    @Value("${app.rabbitmq.routing-key.deleted}")
-    private String routingKeyDeleted;
-
-    // --- Cola específica de este servicio ---
-    private static final String CATEGORY_QUEUE = "udea.categorization_service.queue";
-
+    /**
+     * Define el exchange de tipo Topic donde se publicarán los eventos.
+     * Los consumidores se suscribirán a este exchange con diferentes routing keys.
+     */
     @Bean
-    public Queue categoryQueue() {
-        return new Queue(CATEGORY_QUEUE, true);
+    public TopicExchange categoryEventsExchange() {
+        return new TopicExchange(categoryEventsExchange, true, false);
     }
 
-    @Bean
-    public TopicExchange projectEventsExchange() {
-        return new TopicExchange(projectEventsExchange);
-    }
-
-    @Bean
-    public Binding bindingProjectCreated(Queue categoryQueue, TopicExchange projectEventsExchange) {
-        return BindingBuilder.bind(categoryQueue)
-                .to(projectEventsExchange)
-                .with(routingKeyCreated);
-    }
-
-    @Bean
-    public Binding bindingProjectUpdated(Queue categoryQueue, TopicExchange projectEventsExchange) {
-        return BindingBuilder.bind(categoryQueue)
-                .to(projectEventsExchange)
-                .with(routingKeyUpdated);
-    }
-
-    @Bean
-    public Binding bindingProjectDeleted(Queue categoryQueue, TopicExchange projectEventsExchange) {
-        return BindingBuilder.bind(categoryQueue)
-                .to(projectEventsExchange)
-                .with(routingKeyDeleted);
-    }
-
-    // --- Administración y conversión ---
+    /**
+     * Administrador de RabbitMQ para crear exchanges, colas y bindings automáticamente.
+     */
     @Bean
     public RabbitAdmin rabbitAdmin(ConnectionFactory connectionFactory) {
         return new RabbitAdmin(connectionFactory);
     }
 
+    /**
+     * Inicializa RabbitMQ creando los recursos definidos al arrancar la aplicación.
+     */
     @Bean
-    public ApplicationRunner runner(RabbitAdmin rabbitAdmin) {
-        return args -> rabbitAdmin.initialize();
+    public ApplicationRunner initializeRabbitMQ(RabbitAdmin rabbitAdmin) {
+        return args -> {
+            rabbitAdmin.initialize();
+        };
     }
 
+    /**
+     * Convertidor de mensajes JSON para serialización/deserialización automática.
+     */
     @Bean
-    public Jackson2JsonMessageConverter jackson2JsonMessageConverter() {
+    public MessageConverter jackson2JsonMessageConverter() {
         return new Jackson2JsonMessageConverter();
     }
 
+    /**
+     * Template de RabbitMQ configurado con el convertidor JSON.
+     */
     @Bean
     public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory,
-                                          Jackson2JsonMessageConverter converter) {
+                                         MessageConverter messageConverter) {
         RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
-        rabbitTemplate.setMessageConverter(converter);
+        rabbitTemplate.setMessageConverter(messageConverter);
         return rabbitTemplate;
-    }
-
-    @Bean
-    public SimpleRabbitListenerContainerFactory rabbitListenerContainerFactory(
-            ConnectionFactory connectionFactory,
-            Jackson2JsonMessageConverter converter
-    ) {
-        SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
-        factory.setConnectionFactory(connectionFactory);
-        factory.setMessageConverter(converter);
-        return factory;
     }
 }

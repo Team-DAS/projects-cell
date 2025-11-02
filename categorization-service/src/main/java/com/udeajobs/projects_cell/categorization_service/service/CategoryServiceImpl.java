@@ -9,9 +9,11 @@ import com.udeajobs.projects_cell.categorization_service.exception.DuplicateReso
 import com.udeajobs.projects_cell.categorization_service.exception.ResourceNotFoundException;
 import com.udeajobs.projects_cell.categorization_service.mapper.CategoryMapper;
 import com.udeajobs.projects_cell.categorization_service.repository.CategoryRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,38 +29,15 @@ import java.util.stream.Collectors;
  */
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
+
+    private static final Logger logger = LoggerFactory.getLogger(CategoryServiceImpl.class);
 
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
     private final RabbitTemplate rabbitTemplate;
-
-    @Value("${app.rabbitmq.category-events-exchange}")
-    private String exchangeName;
-
-    @Value("${app.rabbitmq.routing-key.created}")
-    private String routingKeyCreated;
-
-    @Value("${app.rabbitmq.routing-key.updated}")
-    private String routingKeyUpdated;
-
-    @Value("${app.rabbitmq.routing-key.deleted}")
-    private String routingKeyDeleted;
-
-    /**
-     * Constructor con inyección de dependencias.
-     *
-     * @param categoryRepository Repositorio de categorías
-     * @param categoryMapper Mapper de entidades/DTOs
-     * @param rabbitTemplate Template para publicar mensajes en RabbitMQ
-     */
-    public CategoryServiceImpl(CategoryRepository categoryRepository,
-                               CategoryMapper categoryMapper,
-                               RabbitTemplate rabbitTemplate) {
-        this.categoryRepository = categoryRepository;
-        this.categoryMapper = categoryMapper;
-        this.rabbitTemplate = rabbitTemplate;
-    }
+    private final CategoryEventPublisher eventPublisher;
 
     /**
      * Crea una nueva categoría en el sistema y publica un evento.
@@ -84,20 +63,8 @@ public class CategoryServiceImpl implements CategoryService {
         Category savedCategory = categoryRepository.save(category);
         log.info("Categoría {} guardada en BBDD con ID: {}", savedCategory.getName(), savedCategory.getCategoryId());
 
-        CategoryEventDTO eventDTO = categoryMapper.toCategoryEventDTO(savedCategory);
-        eventDTO.setEventType("CREATED");
-
-        // Publicar evento en RabbitMQ
-        try {
-            log.info("MessageConverter activo: {}", rabbitTemplate.getMessageConverter().getClass().getSimpleName());
-            rabbitTemplate.convertAndSend(exchangeName, routingKeyCreated, eventDTO);
-            log.info("Evento 'category.created' publicado para la categoría {}", savedCategory.getCategoryId());
-        } catch (Exception e) {
-            log.error("Error al publicar evento 'category.created' para {}: {}",
-                    savedCategory.getCategoryId(), e.getMessage());
-            // NOTA: La transacción de BBDD no se revierte. Podríamos implementar
-            // un patrón Outbox para garantizar consistencia eventual.
-        }
+        // Publicar evento de categoría creada
+        eventPublisher.publishCategoryCreated(savedCategory);
 
         return categoryMapper.toCategoryResponseDTO(savedCategory);
     }
@@ -175,14 +142,12 @@ public class CategoryServiceImpl implements CategoryService {
     public CategoryResponseDTO updateCategory(UUID categoryId, CategoryRequestDTO dto) {
         log.info("Actualizando categoría con ID: {}", categoryId);
 
-        // 1. Buscar la categoría existente
         Category category = categoryRepository.findByCategoryId(categoryId)
                 .orElseThrow(() -> {
                     log.warn("Categoría no encontrada con ID: {}", categoryId);
                     return new ResourceNotFoundException("Categoría no encontrada con ID: " + categoryId);
                 });
 
-        // 2. Validar que el nuevo nombre no esté en uso (si cambió)
         if (!category.getName().equals(dto.getName()) && categoryRepository.existsByName(dto.getName())) {
             log.warn("Intento de actualizar a nombre duplicado: {}", dto.getName());
             throw new DuplicateResourceException("Ya existe una categoría con el nombre: " + dto.getName());
@@ -193,17 +158,8 @@ public class CategoryServiceImpl implements CategoryService {
         Category updatedCategory = categoryRepository.save(category);
         log.info("Categoría {} actualizada correctamente", updatedCategory.getCategoryId());
 
-        CategoryEventDTO eventDTO = categoryMapper.toCategoryEventDTO(updatedCategory);
-        eventDTO.setEventType("UPDATED");
-
-        // Publicar evento en RabbitMQ
-        try {
-            rabbitTemplate.convertAndSend(exchangeName, routingKeyUpdated, eventDTO);
-            log.info("Evento 'category.updated' publicado para la categoría {}", updatedCategory.getCategoryId());
-        } catch (Exception e) {
-            log.error("Error al publicar evento 'category.updated' para {}: {}",
-                    updatedCategory.getCategoryId(), e.getMessage());
-        }
+        // Publicar evento de categoría update
+        eventPublisher.publishCategoryUpdated(updatedCategory);
 
         return categoryMapper.toCategoryResponseDTO(updatedCategory);
     }
@@ -229,19 +185,8 @@ public class CategoryServiceImpl implements CategoryService {
         categoryRepository.delete(category);
         log.info("Categoría {} eliminada de BBDD", categoryId);
 
-        CategoryEventDTO eventDTO = CategoryEventDTO.builder()
-                .categoryId(categoryId)
-                .eventType("DELETED")
-                .build();
-
-        // Publicar evento en RabbitMQ
-        try {
-            rabbitTemplate.convertAndSend(exchangeName, routingKeyDeleted, eventDTO);
-            log.info("Evento 'category.deleted' publicado para la categoría {}", categoryId);
-        } catch (Exception e) {
-            log.error("Error al publicar evento 'category.deleted' para {}: {}",
-                    categoryId, e.getMessage());
-        }
+        // Publicar evento de categoría eliminada
+        eventPublisher.publishCategoryDeleted(category);
     }
 }
 
