@@ -1,0 +1,18 @@
+spring:
+  # Configuración de Elasticsearch
+  elasticsearch:
+    uris: ${ELASTICSEARCH_HOST}
+    username: ${ELASTICSEARCH_USER}
+    password: ${ELASTICSEARCH_PASSWORD}
+
+
+  # Configuración de RabbitMQ (para el consumidor)
+  rabbitmq:
+    host: ${RABBITMQ_HOST}
+
+  # Configuración de GraphQL
+  graphql:
+    graphiql:
+      enabled: true
+      path: "/graphiql"
+

@@ -4,8 +4,8 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.udeajobs.projects_cell.projects_service.events.dto.ProjectEventDTO;
 import com.udeajobs.projects_cell.projects_service.entity.Project;
+import com.udeajobs.projects_cell.projects_service.events.dto.ProjectEventDTO;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -81,6 +81,7 @@ public class ProjectEventPublisher {
         return ProjectEventDTO.builder()
                 .eventType(eventType)
                 .projectId(project.getProjectId())
+                .employerId(project.getEmployerId())
                 .title(project.getTitle())
                 .description(project.getDescription())
                 .status(project.getStatus() != null ? project.getStatus().name() : null)

@@ -21,6 +21,7 @@ public class ProjectEventDTO {
     
     private String eventType;  // CREATED, UPDATED, DELETED
     private UUID projectId;
+    private UUID employerId;
     private String title;
     private String description;
     private String status;
