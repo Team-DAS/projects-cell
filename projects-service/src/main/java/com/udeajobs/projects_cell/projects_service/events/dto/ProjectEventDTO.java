@@ -1,6 +1,5 @@
 package com.udeajobs.projects_cell.projects_service.events.dto;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -32,6 +31,4 @@ public class ProjectEventDTO {
     private Boolean isRemote;
     private List<String> requiredSkills;
     private String jobLevel;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 }

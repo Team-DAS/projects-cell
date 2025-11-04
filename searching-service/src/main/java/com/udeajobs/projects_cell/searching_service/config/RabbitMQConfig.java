@@ -32,13 +32,18 @@ public class RabbitMQConfig {
      * Conversor de mensajes JSON.
      * <p>
      * Utiliza Jackson para serializar/deserializar mensajes automáticamente.
+     * Configurado para usar el tipo del parámetro del método en lugar del __TypeId__ header.
+     * Esto permite recibir mensajes de otros servicios con DTOs en diferentes paquetes.
      * </p>
      *
      * @return conversor de mensajes
      */
     @Bean
     public MessageConverter jsonMessageConverter() {
-        return new Jackson2JsonMessageConverter();
+        Jackson2JsonMessageConverter converter = new Jackson2JsonMessageConverter();
+        // Siempre usar el tipo INFERIDO del parámetro del método listener, ignorando __TypeId__ del header
+        converter.setAlwaysConvertToInferredType(true);
+        return converter;
     }
 
     /**

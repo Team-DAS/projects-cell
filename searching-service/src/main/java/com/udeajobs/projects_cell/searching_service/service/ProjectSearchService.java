@@ -253,8 +253,6 @@ public class ProjectSearchService {
                 .jobLevel(document.getJobLevel())
                 .mainCategory(document.getMainCategory())
                 .tags(document.getTags())
-                .createdAt(document.getCreatedAt())
-                .updatedAt(document.getUpdatedAt())
                 .build();
     }
 }

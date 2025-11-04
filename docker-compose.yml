@@ -90,10 +90,10 @@ services:
       - GROQ_API_URL=https://api.groq.com/openai/v1/chat/completions
       - GROQ_MODEL=llama-3.1-8b-instant
   
-  search-service:
+  searching-service:
     build:
-      context: ./search-service 
-    container_name: search-service
+      context: ./searching-service 
+    container_name: searching-service
     restart: unless-stopped
     networks:
       - projects-network

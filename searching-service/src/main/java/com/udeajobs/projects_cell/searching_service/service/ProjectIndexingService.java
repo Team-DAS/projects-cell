@@ -171,8 +171,6 @@ public class ProjectIndexingService {
                 .isRemote(eventDTO.getIsRemote())
                 .requiredSkills(eventDTO.getRequiredSkills())
                 .jobLevel(eventDTO.getJobLevel())
-                .createdAt(eventDTO.getCreatedAt())
-                .updatedAt(eventDTO.getUpdatedAt())
                 .build();
     }
 
@@ -195,8 +193,6 @@ public class ProjectIndexingService {
         document.setIsRemote(eventDTO.getIsRemote());
         document.setRequiredSkills(eventDTO.getRequiredSkills());
         document.setJobLevel(eventDTO.getJobLevel());
-        document.setCreatedAt(eventDTO.getCreatedAt());
-        document.setUpdatedAt(eventDTO.getUpdatedAt());
         // mainCategory y tags se preservan si ya existen
     }
 }

@@ -1,6 +1,5 @@
 package com.udeajobs.projects_cell.searching_service.consumer;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.udeajobs.projects_cell.searching_service.dto.event.CategorizationEventDTO;
 import com.udeajobs.projects_cell.searching_service.service.ProjectIndexingService;
 import lombok.RequiredArgsConstructor;
@@ -25,36 +24,31 @@ import org.springframework.stereotype.Component;
 public class CategorizationEventConsumer {
 
     private final ProjectIndexingService indexingService;
-    private final ObjectMapper objectMapper;
 
     /**
      * Consume eventos de categorización desde RabbitMQ.
      * <p>
      * Este método es invocado automáticamente cuando llega un mensaje
-     * a la cola configurada.
+     * a la cola configurada. El mensaje es deserializado automáticamente
+     * por Jackson2JsonMessageConverter.
      * </p>
      *
-     * @param message mensaje JSON con el evento de categorización
+     * @param eventDTO evento de categorización deserializado
      */
     @RabbitListener(queues = "${app.rabbitmq.queues.categorization-events}")
-    public void consumeCategorizationEvent(String message) {
+    public void consumeCategorizationEvent(CategorizationEventDTO eventDTO) {
         log.info("Mensaje recibido de la cola de eventos de categorización");
-        log.debug("Contenido del mensaje: {}", message);
+        log.info("Evento de categorización deserializado correctamente: projectId={}, mainCategory={}",
+                eventDTO.getProjectId(), eventDTO.getMainCategory());
 
         try {
-            CategorizationEventDTO eventDTO = objectMapper.readValue(message, CategorizationEventDTO.class);
-            log.info("Evento de categorización deserializado correctamente: projectId={}, mainCategory={}",
-                    eventDTO.getProjectId(), eventDTO.getMainCategory());
-
             indexingService.handleCategorizationEvent(eventDTO);
-
             log.info("Evento de categorización procesado exitosamente: {}", eventDTO.getProjectId());
-
         } catch (Exception e) {
-            log.error("Error al procesar mensaje de evento de categorización: {}", message, e);
+            log.error("Error al procesar evento de categorización: projectId={}", eventDTO.getProjectId(), e);
             // En un entorno de producción, aquí podrías:
             // - Enviar a una cola de dead letter
-            // - Reintentar con backoff exponencial
+            log.error("Error al procesar evento de categorización: projectId={}", eventDTO.getProjectId(), e);
             // - Alertar al equipo de operaciones
             throw new RuntimeException("Error al procesar evento de categorización", e);
         }

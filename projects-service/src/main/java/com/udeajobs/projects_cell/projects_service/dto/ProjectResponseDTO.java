@@ -1,7 +1,6 @@
 package com.udeajobs.projects_cell.projects_service.dto;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -75,14 +74,4 @@ public class ProjectResponseDTO {
      * Nivel de experiencia requerido para el proyecto.
      */
     private String jobLevel;
-
-    /**
-     * Fecha y hora de creación del proyecto.
-     */
-    private LocalDateTime createdAt;
-
-    /**
-     * Fecha y hora de última actualización del proyecto.
-     */
-    private LocalDateTime updatedAt;
 }

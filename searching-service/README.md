@@ -109,8 +109,6 @@ Crea un archivo `.env` o configura las siguientes variables:
 ```bash
 # Elasticsearch
 ELASTICSEARCH_HOST=http://localhost:9200
-ELASTICSEARCH_USER=elastic
-ELASTICSEARCH_PASSWORD=changeme
 ELASTICSEARCH_INDEX_NAME=projects
 
 # RabbitMQ

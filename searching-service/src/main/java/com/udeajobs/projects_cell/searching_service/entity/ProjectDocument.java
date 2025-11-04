@@ -122,21 +122,13 @@ public class ProjectDocument {
     private List<String> tags;
 
     /**
-     * Fecha de creación del proyecto.
+     * Fecha de última indexación/actualización en Elasticsearch.
+     * <p>
+     * Este campo rastrea cuándo fue la última vez que este documento
+     * fue sincronizado con Elasticsearch, útil para auditoría y debugging.
+     * </p>
      */
-    @Field(type = FieldType.Date)
-    private LocalDateTime createdAt;
-
-    /**
-     * Fecha de última actualización del proyecto.
-     */
-    @Field(type = FieldType.Date)
-    private LocalDateTime updatedAt;
-
-    /**
-     * Fecha de indexación en Elasticsearch.
-     */
-    @Field(type = FieldType.Date)
+    @Field(type = FieldType.Date, format = {}, pattern = "uuuu-MM-dd'T'HH:mm:ss.SSS")
     private LocalDateTime indexedAt;
 }
 

@@ -92,8 +92,6 @@ public class ProjectEventPublisher {
                 .isRemote(project.getIsRemote())
                 .requiredSkills(project.getRequiredSkills())
                 .jobLevel(project.getJobLevel())
-                .createdAt(project.getCreatedAt())
-                .updatedAt(project.getUpdatedAt())
                 .build();
     }
 }

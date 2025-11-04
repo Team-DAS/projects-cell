@@ -1,6 +1,5 @@
 package com.udeajobs.projects_cell.searching_service.consumer;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.udeajobs.projects_cell.searching_service.dto.event.ProjectEventDTO;
 import com.udeajobs.projects_cell.searching_service.service.ProjectIndexingService;
 import lombok.RequiredArgsConstructor;
@@ -25,36 +24,30 @@ import org.springframework.stereotype.Component;
 public class ProjectEventConsumer {
 
     private final ProjectIndexingService indexingService;
-    private final ObjectMapper objectMapper;
 
     /**
      * Consume eventos de proyectos desde RabbitMQ.
      * <p>
      * Este método es invocado automáticamente cuando llega un mensaje
-     * a la cola configurada.
+     * a la cola configurada. El mensaje es deserializado automáticamente
+     * por Jackson2JsonMessageConverter.
      * </p>
      *
-     * @param message mensaje JSON con el evento del proyecto
+     * @param eventDTO evento del proyecto deserializado
      */
     @RabbitListener(queues = "${app.rabbitmq.queues.project-events}")
-    public void consumeProjectEvent(String message) {
+    public void consumeProjectEvent(ProjectEventDTO eventDTO) {
         log.info("Mensaje recibido de la cola de eventos de proyectos");
-        log.debug("Contenido del mensaje: {}", message);
-
+        log.info("Evento deserializado correctamente: tipo={}, projectId={}",
+                eventDTO.getEventType(), eventDTO.getProjectId());
         try {
-            ProjectEventDTO eventDTO = objectMapper.readValue(message, ProjectEventDTO.class);
-            log.info("Evento deserializado correctamente: tipo={}, projectId={}",
-                    eventDTO.getEventType(), eventDTO.getProjectId());
-
             indexingService.handleProjectEvent(eventDTO);
-
             log.info("Evento de proyecto procesado exitosamente: {}", eventDTO.getProjectId());
-
         } catch (Exception e) {
-            log.error("Error al procesar mensaje de evento de proyecto: {}", message, e);
+            log.error("Error al procesar evento de proyecto: projectId={}", eventDTO.getProjectId(), e);
             // En un entorno de producción, aquí podrías:
             // - Enviar a una cola de dead letter
-            // - Reintentar con backoff exponencial
+            log.error("Error al procesar evento de proyecto: projectId={}", eventDTO.getProjectId(), e);
             // - Alertar al equipo de operaciones
             throw new RuntimeException("Error al procesar evento de proyecto", e);
         }
