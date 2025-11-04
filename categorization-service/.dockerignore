@@ -1,0 +1,19 @@
+# .dockerignore
+
+# Ignorar el entorno virtual de Python
+.venv/
+venv/
+env/
+
+# Ignorar archivos compilados de Python
+__pycache__/
+*.pyc
+
+# Ignorar configuraciones de IDE y git
+.git/
+.gitignore
+.idea/
+.vscode/
+
+# Ignorar caché de herramientas
+.pytest_cache/
