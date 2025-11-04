@@ -46,20 +46,35 @@ services:
 
   # --- Microservicios ---
 
+  projects-gateway:
+    build:
+      context: ./projects-gateway 
+    container_name: projects-gateway
+    restart: unless-stopped
+    ports:
+      - "80:8080" 
+    networks:
+      - projects-network
+      - infrastructure-network
+    depends_on:
+      # ... (dependencias) ...
+    environment:
+      - PROJECTS_SERVICE_URL=http://projects-service:8080
+      - SEARCH_SERVICE_URL=http://search-service:8080
+      - CATEGORIZATION_SERVICE_URL=http://categorization-service:8080
+      - JWT_SECRET="7NG5umhwfjKJDAqa53AlX1vNOypdUlUG4b/CuN8Wja8="
+
   projects-service:
     build:
       context: ./projects-service
     container_name: projects-service
     restart: unless-stopped
-    ports:
-      - "8071:8071"
     networks:
       - projects-network
       - infrastructure-network
     depends_on:
       - postgres_projects
     environment:
-      - SERVER_PORT=8071
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres_projects:5432/projects_db
       - SPRING_DATASOURCE_USERNAME=projects_user
       - SPRING_DATASOURCE_PASSWORD=projects_password
