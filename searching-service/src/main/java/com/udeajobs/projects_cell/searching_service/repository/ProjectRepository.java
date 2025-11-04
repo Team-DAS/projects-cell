@@ -9,7 +9,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 /**
  * Repositorio para operaciones de búsqueda en Elasticsearch de proyectos.
@@ -28,10 +27,10 @@ public interface ProjectRepository extends ElasticsearchRepository<ProjectDocume
     /**
      * Busca un proyecto por su UUID.
      *
-     * @param projectId UUID del proyecto
+     * @param projectId UUID del proyecto como String
      * @return Optional con el proyecto si existe
      */
-    Optional<ProjectDocument> findByProjectId(UUID projectId);
+    Optional<ProjectDocument> findByProjectId(String projectId);
 
     /**
      * Busca proyectos por estado con paginación.
@@ -110,8 +109,8 @@ public interface ProjectRepository extends ElasticsearchRepository<ProjectDocume
     /**
      * Elimina un proyecto por su UUID.
      *
-     * @param projectId UUID del proyecto
+     * @param projectId UUID del proyecto como String
      */
-    void deleteByProjectId(UUID projectId);
+    void deleteByProjectId(String projectId);
 }
 

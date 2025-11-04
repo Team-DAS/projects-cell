@@ -11,7 +11,6 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Documento de Elasticsearch que representa un proyecto indexado.
@@ -41,13 +40,13 @@ public class ProjectDocument {
      * UUID del proyecto en el sistema fuente.
      */
     @Field(type = FieldType.Keyword)
-    private UUID projectId;
+    private String projectId;
 
     /**
      * UUID del empleador que publica el proyecto.
      */
     @Field(type = FieldType.Keyword)
-    private UUID employerId;
+    private String employerId;
 
     /**
      * Título del proyecto.

@@ -107,7 +107,7 @@ public class ProjectSearchService {
         Counter findByIdCounter = meterRegistry.counter("projects.search.by_id");
         findByIdCounter.increment();
 
-        ProjectDocument project = projectRepository.findByProjectId(projectId)
+        ProjectDocument project = projectRepository.findByProjectId(projectId.toString())
                 .orElseThrow(() -> {
                     meterRegistry.counter("projects.not_found").increment();
                     return new ProjectNotFoundException(projectId);
@@ -239,8 +239,8 @@ public class ProjectSearchService {
      */
     private ProjectResponse mapToResponse(ProjectDocument document) {
         return ProjectResponse.builder()
-                .projectId(document.getProjectId())
-                .employerId(document.getEmployerId())
+                .projectId(UUID.fromString(document.getProjectId()))
+                .employerId(UUID.fromString(document.getEmployerId()))
                 .title(document.getTitle())
                 .description(document.getDescription())
                 .status(document.getStatus())

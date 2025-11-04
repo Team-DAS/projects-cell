@@ -73,7 +73,7 @@ public class ProjectIndexingService {
         log.info("Procesando evento de categorización para projectId: {}", eventDTO.getProjectId());
 
         try {
-            Optional<ProjectDocument> existingProject = projectRepository.findByProjectId(eventDTO.getProjectId());
+            Optional<ProjectDocument> existingProject = projectRepository.findByProjectId(eventDTO.getProjectId().toString());
 
             if (existingProject.isPresent()) {
                 ProjectDocument project = existingProject.get();
@@ -118,7 +118,7 @@ public class ProjectIndexingService {
      * @param eventDTO datos actualizados del proyecto
      */
     private void updateProject(ProjectEventDTO eventDTO) {
-        Optional<ProjectDocument> existingProject = projectRepository.findByProjectId(eventDTO.getProjectId());
+        Optional<ProjectDocument> existingProject = projectRepository.findByProjectId(eventDTO.getProjectId().toString());
 
         ProjectDocument document;
         if (existingProject.isPresent()) {
@@ -144,7 +144,7 @@ public class ProjectIndexingService {
      * @param projectId UUID del proyecto
      */
     private void deleteProject(java.util.UUID projectId) {
-        projectRepository.deleteByProjectId(projectId);
+        projectRepository.deleteByProjectId(projectId.toString());
 
         meterRegistry.counter("projects.indexing.deleted").increment();
         log.info("Proyecto {} eliminado del índice exitosamente", projectId);
@@ -159,8 +159,8 @@ public class ProjectIndexingService {
     private ProjectDocument mapEventToDocument(ProjectEventDTO eventDTO) {
         return ProjectDocument.builder()
                 .id(eventDTO.getProjectId().toString())
-                .projectId(eventDTO.getProjectId())
-                .employerId(eventDTO.getEmployerId())
+                .projectId(eventDTO.getProjectId().toString())
+                .employerId(eventDTO.getEmployerId().toString())
                 .title(eventDTO.getTitle())
                 .description(eventDTO.getDescription())
                 .status(eventDTO.getStatus())
@@ -182,7 +182,7 @@ public class ProjectIndexingService {
      * @param eventDTO evento con nuevos datos
      */
     private void updateDocumentFromEvent(ProjectDocument document, ProjectEventDTO eventDTO) {
-        document.setEmployerId(eventDTO.getEmployerId());
+        document.setEmployerId(eventDTO.getEmployerId().toString());
         document.setTitle(eventDTO.getTitle());
         document.setDescription(eventDTO.getDescription());
         document.setStatus(eventDTO.getStatus());
