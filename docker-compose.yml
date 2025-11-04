@@ -9,7 +9,7 @@ networks:
 volumes:
   postgres-projects-data:
     driver: local
-  postgres-categorization-data:
+  elasticsearch-data:
     driver: local
 
 services:
@@ -26,6 +26,20 @@ services:
       - POSTGRES_DB=projects_db
       - POSTGRES_USER=projects_user
       - POSTGRES_PASSWORD=projects_password
+    networks:
+      - projects-network
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.1
+    container_name: elasticsearch
+    restart: unless-stopped
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false  # <-- Deshabilita la seguridad
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m # Limita la RAM
+    ports:
+      - "9200:9200"
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
     networks:
       - projects-network
 
@@ -53,10 +67,10 @@ services:
       - SPRING_RABBITMQ_PORT=5672
       - SPRING_RABBITMQ_USERNAME=guest
       - SPRING_RABBITMQ_PASSWORD=guest
-      - APP_RABBITMQ_PROJECT_EVENTS_EXCHANGE=project.events.exchange
-      - APP_RABBITMQ_ROUTING_KEY_CREATED=project.created
-      - APP_RABBITMQ_ROUTING_KEY_UPDATED=project.updated
-      - APP_RABBITMQ_ROUTING_KEY_DELETED=project.deleted
+      - PROJECT_EVENTS_EXCHANGE=project.events.exchange
+      - ROUTING_KEY_CREATED=project.created
+      - ROUTING_KEY_UPDATED=project.updated
+      - ROUTING_KEY_DELETED=project.deleted
 
   categorization-service:
     build:
@@ -75,3 +89,30 @@ services:
       - ROUTING_KEY_UPDATED=project.updated
       - GROQ_API_URL=https://api.groq.com/openai/v1/chat/completions
       - GROQ_MODEL=llama-3.1-8b-instant
+  
+  search-service:
+    build:
+      context: ./search-service 
+    container_name: search-service
+    restart: unless-stopped
+    networks:
+      - projects-network
+      - infrastructure-network
+    depends_on:
+      - elasticsearch   
+    environment:
+      # --- Conexión a Elasticsearch ---
+      - ELASTICSEARCH_HOST=http://elasticsearch:9200
+      # --- Conexión a RabbitMQ ---
+      - RABBITMQ_HOST=rabbitmq-udeajobs
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USER=guest
+      - RABBITMQ_PASSWORD=guest
+      # --- Nombres de la App ---
+      - ELASTICSEARCH_INDEX_NAME=projects
+      - PROJECT_QUEUE=searchproject.created.queue
+      - CATEGORIZATION_QUEUE=searchproject.categorized.queue
+      - PROJECT_EXCHANGE=project.events.exchange
+      - CATEGORIZATION_EXCHANGE=project.events.exchange
+      - PROJECT_ROUTING_KEY=project.created
+      - CATEGORIZATION_ROUTING_KEY=project.categorized

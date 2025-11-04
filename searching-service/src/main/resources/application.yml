@@ -1,18 +1,65 @@
 spring:
+  application:
+    name: searching-service
+
   # Configuración de Elasticsearch
   elasticsearch:
-    uris: ${ELASTICSEARCH_HOST}
-    username: ${ELASTICSEARCH_USER}
-    password: ${ELASTICSEARCH_PASSWORD}
-
+    uris: ${ELASTICSEARCH_HOST:http://localhost:9200}
 
   # Configuración de RabbitMQ (para el consumidor)
   rabbitmq:
-    host: ${RABBITMQ_HOST}
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USER:guest}
+    password: ${RABBITMQ_PASSWORD:guest}
+    listener:
+      simple:
+        acknowledge-mode: auto
+        prefetch: 10
+        retry:
+          enabled: true
+          initial-interval: 3000
+          max-attempts: 3
+          multiplier: 2
 
   # Configuración de GraphQL
   graphql:
     graphiql:
       enabled: true
       path: "/graphiql"
+
+
+# Configuración de Actuator y métricas
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+    prometheus:
+      access:
+  metrics:
+    tags:
+      application: ${spring.application.name}
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+
+# Configuración específica de la aplicación
+app:
+  elasticsearch:
+    index-name: ${ELASTICSEARCH_INDEX_NAME:projects}
+  rabbitmq:
+    queues:
+      project-events: ${PROJECT_QUEUE:project.events.queue}
+      categorization-events: ${CATEGORIZATION_QUEUE:project.categorization.queue}
+    exchanges:
+      project-events: ${PROJECT_EXCHANGE:project.events.exchange}
+      categorization-events: ${CATEGORIZATION_EXCHANGE:project.categorization.exchange}
+    routing-keys:
+      project-events: ${PROJECT_ROUTING_KEY:project.events}
+      categorization-events: ${CATEGORIZATION_ROUTING_KEY:project.categorization}
 

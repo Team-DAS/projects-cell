@@ -5,7 +5,6 @@ import com.udeajobs.projects_cell.searching_service.dto.event.ProjectEventDTO;
 import com.udeajobs.projects_cell.searching_service.entity.ProjectDocument;
 import com.udeajobs.projects_cell.searching_service.exception.IndexingException;
 import com.udeajobs.projects_cell.searching_service.repository.ProjectRepository;
-import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
