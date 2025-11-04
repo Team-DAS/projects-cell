@@ -63,22 +63,15 @@ services:
       context: ./categorization-service
     container_name: categorization-service
     restart: unless-stopped
-    ports:
-      - "8072:8072"
+    env_file:
+      - ./categorization-service/.env
     networks:
       - projects-network
       - infrastructure-network
-    depends_on:
-      - postgres_categorization
     environment:
-      - SERVER_PORT=8072
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres_categorization:5432/categorization_db
-      - SPRING_DATASOURCE_USERNAME=categorization_user
-      - SPRING_DATASOURCE_PASSWORD=categorization_password
-      - SPRING_RABBITMQ_HOST=rabbitmq-udeajobs
-      - SPRING_RABBITMQ_USERNAME=guest
-      - SPRING_RABBITMQ_PASSWORD=guest
-      - APP_RABBITMQ_CATEGORIZATION_EVENTS_EXCHANGE=categorization.events.exchange
-      - APP_RABBITMQ_ROUTING_KEY_CREATED=categorization.created
-      - APP_RABBITMQ_ROUTING_KEY_UPDATED=categorization.updated
-      - APP_RABBITMQ_ROUTING_KEY_DELETED=categorization.deleted
+      - RABBITMQ_HOST=rabbitmq-udeajobs
+      - PROJECT_EXCHANGE=project.events.exchange 
+      - ROUTING_KEY_CREATED=project.created
+      - ROUTING_KEY_UPDATED=project.updated
+      - GROQ_API_URL=https://api.groq.com/openai/v1/chat/completions
+      - GROQ_MODEL=llama-3.1-8b-instant

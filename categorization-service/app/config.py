@@ -25,9 +25,9 @@ class Settings(BaseSettings):
     CATEGORIZATION_QUEUE: str = "categorization_queue"
     
     # --- Groq (IA API) ---
-    GROQ_API_KEY: str
+    GROQ_API_KEY: str 
     GROQ_API_URL: str = "https://api.groq.com/openai/v1/chat/completions"
-    GROQ_MODEL: str = "llama3-8b-8192" # Un modelo rápido y ligero
+    GROQ_MODEL: str = "llama-3.1-8b-instant" # Modelo corregido: nota el guión y versión 3.1
 
     class Config:
         # Esto le dice a Pydantic que busque variables de entorno
