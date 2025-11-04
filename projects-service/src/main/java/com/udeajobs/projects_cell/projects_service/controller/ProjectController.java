@@ -3,7 +3,6 @@ package com.udeajobs.projects_cell.projects_service.controller;
 import java.util.List;
 import java.util.UUID;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -13,12 +12,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.udeajobs.projects_cell.projects_service.dto.ProjectRequestDTO;
 import com.udeajobs.projects_cell.projects_service.dto.ProjectResponseDTO;
-import com.udeajobs.projects_cell.projects_service.enums.ProjectStatus;
 import com.udeajobs.projects_cell.projects_service.service.ProjectService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,6 +24,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Controlador REST para la gestión de proyectos.
