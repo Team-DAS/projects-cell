@@ -29,21 +29,6 @@ services:
     networks:
       - projects-network
 
-  # --- Base de Datos para Categorization Service ---
-  postgres_categorization:
-    image: postgres:15-alpine
-    container_name: postgres_categorization
-    restart: unless-stopped
-    ports:
-      - "5434:5432"
-    volumes:
-      - postgres-categorization-data:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_DB=categorization_db
-      - POSTGRES_USER=categorization_user
-      - POSTGRES_PASSWORD=categorization_password
-    networks:
-      - projects-network
 
   # --- Microservicios ---
 

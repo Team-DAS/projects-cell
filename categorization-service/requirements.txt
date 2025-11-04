@@ -1,0 +1,16 @@
+# requirements.txt
+
+# El framework web para el health-check
+fastapi
+
+# El servidor que ejecuta la aplicación FastAPI (equivalente a Tomcat/Jetty)
+uvicorn
+
+# El cliente de RabbitMQ
+pika
+
+# El cliente HTTP para llamar a la API de Groq (equivalente a RestTemplate/WebClient)
+httpx
+
+# Para la gestión de la configuración (leer variables de entorno)
+pydantic<2.0
