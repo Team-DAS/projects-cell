@@ -14,12 +14,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.elasticsearch.client.elc.NativeQuery;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.data.elasticsearch.core.query.Criteria;
-import org.springframework.data.elasticsearch.core.query.CriteriaQuery;
+import org.springframework.data.elasticsearch.core.query.Query;
 import org.springframework.stereotype.Service;
+import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
+import co.elastic.clients.elasticsearch._types.query_dsl.QueryBuilders;
 
 import java.util.List;
 import java.util.UUID;
@@ -61,10 +64,7 @@ public class ProjectSearchService {
         searchCounter.increment();
 
         try {
-            Criteria criteria = buildSearchCriteria(input);
-            Pageable pageable = buildPageable(input);
-
-            CriteriaQuery query = new CriteriaQuery(criteria).setPageable(pageable);
+            Query query = buildSearchQuery(input);
             SearchHits<ProjectDocument> searchHits = elasticsearchOperations.search(query, ProjectDocument.class);
 
             List<ProjectResponse> projects = searchHits.getSearchHits().stream()
@@ -117,70 +117,115 @@ public class ProjectSearchService {
     }
 
     /**
-     * Construye los criterios de búsqueda basados en el input.
+     * Construye la query de búsqueda basada en el input.
      *
      * @param input criterios de búsqueda
-     * @return objeto Criteria para Elasticsearch
+     * @return Query para Elasticsearch
      */
-    private Criteria buildSearchCriteria(ProjectSearchInput input) {
-        Criteria criteria = new Criteria();
+    private Query buildSearchQuery(ProjectSearchInput input) {
+        Pageable pageable = buildPageable(input);
 
-        // Búsqueda por término general (título y descripción)
+        BoolQuery.Builder boolQueryBuilder = QueryBuilders.bool();
+
+        // Búsqueda por término general con multi_match
         if (input.getSearchTerm() != null && !input.getSearchTerm().isBlank()) {
-            Criteria titleCriteria = Criteria.where("title").contains(input.getSearchTerm());
-            Criteria descriptionCriteria = Criteria.where("description").contains(input.getSearchTerm());
-            criteria = criteria.subCriteria(titleCriteria.or(descriptionCriteria));
+            boolQueryBuilder.must(m -> m.multiMatch(mm -> mm
+                    .query(input.getSearchTerm())
+                    .fields("title^3", "description^2", "tags", "mainCategory")
+                    .fuzziness("AUTO")
+            ));
         }
 
         // Filtro por habilidades requeridas
         if (input.getRequiredSkills() != null && !input.getRequiredSkills().isEmpty()) {
-            criteria = criteria.and(Criteria.where("requiredSkills").in(input.getRequiredSkills()));
+            for (String skill : input.getRequiredSkills()) {
+                boolQueryBuilder.filter(f -> f.term(t -> t
+                        .field("requiredSkills")
+                        .value(skill)
+                ));
+            }
         }
 
         // Filtro por ubicación
         if (input.getLocation() != null && !input.getLocation().isBlank()) {
-            criteria = criteria.and(Criteria.where("location").contains(input.getLocation()));
+            boolQueryBuilder.filter(f -> f.match(m -> m
+                    .field("location")
+                    .query(input.getLocation())
+            ));
         }
 
         // Filtro por remoto
         if (input.getIsRemote() != null) {
-            criteria = criteria.and(Criteria.where("isRemote").is(input.getIsRemote()));
+            boolQueryBuilder.filter(f -> f.term(t -> t
+                    .field("isRemote")
+                    .value(input.getIsRemote())
+            ));
         }
 
         // Filtro por rango salarial
         if (input.getMinSalary() != null) {
-            criteria = criteria.and(Criteria.where("maxSalary").greaterThanEqual(input.getMinSalary()));
+            boolQueryBuilder.filter(f -> f.range(r -> r
+                    .number(n -> n
+                            .field("maxSalary")
+                            .gte(input.getMinSalary())
+                    )
+            ));
         }
         if (input.getMaxSalary() != null) {
-            criteria = criteria.and(Criteria.where("minSalary").lessThanEqual(input.getMaxSalary()));
+            boolQueryBuilder.filter(f -> f.range(r -> r
+                    .number(n -> n
+                            .field("minSalary")
+                            .lte(input.getMaxSalary())
+                    )
+            ));
         }
 
         // Filtro por moneda
         if (input.getCurrency() != null && !input.getCurrency().isBlank()) {
-            criteria = criteria.and(Criteria.where("currency").is(input.getCurrency()));
+            boolQueryBuilder.filter(f -> f.term(t -> t
+                    .field("currency")
+                    .value(input.getCurrency())
+            ));
         }
 
         // Filtro por nivel de trabajo
         if (input.getJobLevel() != null && !input.getJobLevel().isBlank()) {
-            criteria = criteria.and(Criteria.where("jobLevel").is(input.getJobLevel()));
+            boolQueryBuilder.filter(f -> f.term(t -> t
+                    .field("jobLevel")
+                    .value(input.getJobLevel())
+            ));
         }
 
         // Filtro por estado
         if (input.getStatus() != null && !input.getStatus().isBlank()) {
-            criteria = criteria.and(Criteria.where("status").is(input.getStatus()));
+            boolQueryBuilder.filter(f -> f.term(t -> t
+                    .field("status")
+                    .value(input.getStatus())
+            ));
         }
 
         // Filtro por categoría principal
         if (input.getMainCategory() != null && !input.getMainCategory().isBlank()) {
-            criteria = criteria.and(Criteria.where("mainCategory").is(input.getMainCategory()));
+            boolQueryBuilder.filter(f -> f.term(t -> t
+                    .field("mainCategory")
+                    .value(input.getMainCategory())
+            ));
         }
 
         // Filtro por tags
         if (input.getTags() != null && !input.getTags().isEmpty()) {
-            criteria = criteria.and(Criteria.where("tags").in(input.getTags()));
+            for (String tag : input.getTags()) {
+                boolQueryBuilder.filter(f -> f.term(t -> t
+                        .field("tags")
+                        .value(tag)
+                ));
+            }
         }
 
-        return criteria;
+        return NativeQuery.builder()
+                .withQuery(q -> q.bool(boolQueryBuilder.build()))
+                .withPageable(pageable)
+                .build();
     }
 
     /**
@@ -199,7 +244,7 @@ public class ProjectSearchService {
             sort = Sort.by(direction, input.getSortBy());
         } else {
             // Ordenamiento por defecto: más recientes primero
-            sort = Sort.by(Sort.Direction.DESC, "createdAt");
+            sort = Sort.by(Sort.Direction.DESC, "indexedAt");
         }
 
         return PageRequest.of(input.getPage(), input.getSize(), sort);

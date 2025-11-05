@@ -9,7 +9,7 @@ const PROJECTS_SERVICE_URL = process.env.PROJECTS_SERVICE_URL;
 const SEARCH_SERVICE_URL = process.env.SEARCH_SERVICE_URL;
 const JWT_SECRET = process.env.JWT_SECRET; 
 
-const PUBLIC_ROUTES = ['/projects/graphql']; 
+const PUBLIC_ROUTES = ['/api/v1/projects/graphql', '/api/v1/projects']; 
 
 // --- 2. El "Hook" de Autenticación (El Middleware) ---
 fastify.addHook('onRequest', async (request, reply) => {
@@ -28,11 +28,8 @@ fastify.addHook('onRequest', async (request, reply) => {
 
   try {
     // --- CLAVE: Verificamos con el secreto ---
-    const decoded = jwt.verify(token, JWT_SECRET); 
+    const decoded = jwt.verify(token, Buffer.from(JWT_SECRET, 'base64'));
 
-    // 3. ¡ÉXITO! Inyectar cabeceras.
-    request.headers['x-user-id'] = decoded.sub; // 'subject(username)'
-    request.headers['x-user-role'] = decoded.role; // 'claims.put("role", ...)'
 
   } catch (err) {
     fastify.log.warn(`Token inválido: ${err.message}`);
@@ -44,14 +41,16 @@ fastify.addHook('onRequest', async (request, reply) => {
 // --- 3. Registro de Rutas (El Proxy) ---
 
 fastify.register(httpProxy, {
-  upstream: PROJECTS_SERVICE_URL,
-  prefix: '/api/v1/projects', 
+  upstream: SEARCH_SERVICE_URL,
+  prefix: '/api/v1/projects/graphql',    
+  rewritePrefix: '/graphql'       
 });
 
+
 fastify.register(httpProxy, {
-  upstream: SEARCH_SERVICE_URL,
-  prefix: '/projects/graphql',    
-  rewritePrefix: '/graphql'       
+  upstream: PROJECTS_SERVICE_URL,
+  prefix: '/api/v1/projects', 
+  rewritePrefix: '/api/v1/projects',
 });
 // --- 4. Iniciar el Servidor ---
 const start = async () => {
