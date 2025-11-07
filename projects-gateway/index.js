@@ -2,60 +2,92 @@ const fastify = require('fastify')({ logger: true });
 
 // Importar las librerías necesarias
 const httpProxy = require('@fastify/http-proxy');
-const jwt = require('jsonwebtoken');
+const metrics = require('fastify-metrics'); 
+
+fastify.register(metrics, { 
+  endpoint: '/metrics',
+});
 
 // --- 1. Configuración (Leída de variables de entorno) ---
 const PROJECTS_SERVICE_URL = process.env.PROJECTS_SERVICE_URL;
-const SEARCH_SERVICE_URL = process.env.SEARCH_SERVICE_URL;
-const JWT_SECRET = process.env.JWT_SECRET; 
+const SEARCHING_SERVICE_URL = process.env.SEARCHING_SERVICE_URL;
 
-const PUBLIC_ROUTES = ['/api/v1/projects/graphql', '/api/v1/projects']; 
+if (!PROJECTS_SERVICE_URL || !SEARCHING_SERVICE_URL) {
+  fastify.log.error('Error: Las variables de entorno de los servicios no están definidas.');
+  process.exit(1);
+}
 
-// --- 2. El "Hook" de Autenticación (El Middleware) ---
-fastify.addHook('onRequest', async (request, reply) => {
-  
-  // Si la ruta es pública, dejarla pasar
-  if (PUBLIC_ROUTES.some(route => request.url.startsWith(route))) {
-    return;
-  }
+// --- 2. HTML del GraphQL Playground ---
+const playgroundHTML = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GraphQL Playground - Projects</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/graphql-playground-react/build/static/css/index.css" />
+  <link rel="shortcut icon" href="https://cdn.jsdelivr.net/npm/graphql-playground-react/build/favicon.png" />
+  <script src="https://cdn.jsdelivr.net/npm/graphql-playground-react/build/static/js/middleware.js"></script>
+</head>
+<body>
+  <div id="root"></div>
+  <script>
+    window.addEventListener('load', function (event) {
+      GraphQLPlayground.init(document.getElementById('root'), {
+        endpoint: '/projects-cell/api/v1/projects/graphql',
+        settings: {
+          'request.credentials': 'same-origin',
+        },
+        tabs: [
+          {
+            endpoint: '/projects-cell/api/v1/projects/graphql',
+            query: '# Bienvenido al GraphQL Playground\\n# Escribe tus queries aquí\\n\\nquery {\\n  # Tu query aquí\\n}',
+          },
+        ],
+      })
+    })
+  </script>
+</body>
+</html>
+`;
 
-  const authHeader = request.headers.authorization;
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return reply.status(401).send({ error: 'Falta token de autorización' });
-  }
-  
-  const token = authHeader.split(' ')[1];
-
-  try {
-    // --- CLAVE: Verificamos con el secreto ---
-    const decoded = jwt.verify(token, Buffer.from(JWT_SECRET, 'base64'));
+// --- 3. Registro de Rutas ---
 
 
-  } catch (err) {
-    fastify.log.warn(`Token inválido: ${err.message}`);
-    return reply.status(401).send({ error: 'Token inválido o expirado' });
-  }
+fastify.get('/projects-cell/api/v1/projects/playground', async (request, reply) => {
+  reply.type('text/html').send(playgroundHTML);
 });
 
-
-// --- 3. Registro de Rutas (El Proxy) ---
 
 fastify.register(httpProxy, {
-  upstream: SEARCH_SERVICE_URL,
-  prefix: '/api/v1/projects/graphql',    
-  rewritePrefix: '/graphql'       
+  upstream: SEARCHING_SERVICE_URL,
+  prefix: '/projects-cell/api/v1/projects/graphql',
+  rewritePrefix: '/graphql',
+  replyOptions: {
+    rewriteRequestHeaders: (originalReq, headers) => ({
+      ...headers,
+      'x-forwarded-host': originalReq.headers.host,
+      'x-forwarded-proto': originalReq.headers['x-forwarded-proto'] || 'http',
+    })
+  }
 });
-
 
 fastify.register(httpProxy, {
   upstream: PROJECTS_SERVICE_URL,
-  prefix: '/api/v1/projects', 
+  prefix: '/projects-cell/api/v1/projects',
   rewritePrefix: '/api/v1/projects',
+  replyOptions: {
+    rewriteRequestHeaders: (originalReq, headers) => ({
+      ...headers,
+      'x-forwarded-host': originalReq.headers.host,
+      'x-forwarded-proto': originalReq.headers['x-forwarded-proto'] || 'http',
+    })
+  }
 });
+
 // --- 4. Iniciar el Servidor ---
 const start = async () => {
   try {
-    // Escuchamos en 0.0.0.0 (para Docker) y en el puerto 8080
     await fastify.listen({ port: 8080, host: '0.0.0.0' });
   } catch (err) {
     fastify.log.error(err);

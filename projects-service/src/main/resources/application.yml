@@ -1,0 +1,41 @@
+spring:
+  application:
+    name: projects-service
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+  rabbitmq:
+    host: ${SPRING_RABBITMQ_HOST}
+    port: ${SPRING_RABBITMQ_PORT}
+    username: ${SPRING_RABBITMQ_USERNAME}
+    password: ${SPRING_RABBITMQ_PASSWORD}
+
+springdoc:
+  api-docs:
+    path: /docs
+server:
+  port: 8080
+  servlet:
+    context-path: /api/v1/projects
+
+management:
+  server:
+    port: 8081
+  endpoints:
+    web:
+      exposure:
+        include: health, prometheus
+
+
+app:
+  rabbitmq:
+    project-events-exchange: ${PROJECT_EVENTS_EXCHANGE}
+    routing-key:
+      created: ${ROUTING_KEY_CREATED}
+      updated: ${ROUTING_KEY_UPDATED}
+      deleted: ${ROUTING_KEY_DELETED}

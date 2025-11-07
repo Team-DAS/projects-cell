@@ -31,7 +31,7 @@ import lombok.RequiredArgsConstructor;
  * Proporciona endpoints para operaciones CRUD sobre proyectos en la plataforma de freelancers.
  */
 @RestController
-@RequestMapping("/api/v1/projects")
+@RequestMapping("/")
 @Tag(name = "Proyectos", description = "API para la gestión de proyectos")
 @RequiredArgsConstructor
 public class ProjectController {

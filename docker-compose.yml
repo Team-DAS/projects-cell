@@ -61,7 +61,7 @@ services:
       - web-gateway
     environment:
       - PROJECTS_SERVICE_URL=http://projects-service:8080
-      - SEARCH_SERVICE_URL=http://searching-service:8080
+      - SEARCHING_SERVICE_URL=http://searching-service:8080
       - JWT_SECRET=7NG5umhwfjKJDAqa53AlX1vNOypdUlUG4b/CuN8Wja8=
 
   projects-service:
@@ -131,3 +131,13 @@ services:
       - CATEGORIZATION_EXCHANGE=project.events.exchange
       - PROJECT_ROUTING_KEY=project.created
       - CATEGORIZATION_ROUTING_KEY=project.categorized
+  projects-docs:
+    image: scalarapi/api-reference:latest 
+    container_name: projects-docs
+    ports:
+    - "5053:8080" 
+    restart: unless-stopped
+    env_file:
+      - ./scalar/.env
+    networks:
+      - projects-network

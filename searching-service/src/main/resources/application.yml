@@ -25,28 +25,18 @@ spring:
   # Configuración de GraphQL
   graphql:
     graphiql:
-      enabled: true
-      path: "/graphiql"
-
-
+      enabled: false
+server:
+  port: 8080
+  forward-headers-strategy: native
 # Configuración de Actuator y métricas
 management:
+  server:
+    port: 8081
   endpoints:
     web:
       exposure:
         include: health,info,metrics,prometheus
-  endpoint:
-    health:
-      show-details: always
-    prometheus:
-      access:
-  metrics:
-    tags:
-      application: ${spring.application.name}
-  prometheus:
-    metrics:
-      export:
-        enabled: true
 
 # Configuración específica de la aplicación
 app:

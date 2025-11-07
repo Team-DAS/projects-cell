@@ -1,0 +1,83 @@
+name: Orquestador Profile Cell
+
+on:
+  push:
+    branches: [ "main" ] 
+  pull_request:
+    branches: [ "main" ]
+
+  workflow_dispatch:
+
+jobs:
+  # -----------------------------------------------------------------
+  # JOB 1: IDENTIFICAR CAMBIOS
+  # Este job es el "cerebro". No construye nada, solo detecta.
+  # -----------------------------------------------------------------
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      # Exporta una variable booleana (true/false) para cada microservicio
+      # El nombre (ej: "auth") debe ser único y lo usaremos abajo
+      dashboard: ${{ steps.filter.outputs.dashboard }}
+      profile: ${{ steps.filter.outputs.profile }}
+      file: ${{ steps.filter.outputs.file }}
+      gateway: ${{ steps.filter.outputs.gateway }}
+    
+    steps:
+      - uses: actions/checkout@v4
+      # Usamos la Action 'paths-filter'
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            dashboard:
+              - 'dashboard-service/**'
+            profile:
+              - 'profile-service/**'
+            file:
+              - 'file-service/**'
+            gateway:
+              - 'profile-gateway/**'
+         
+  # -----------------------------------------------------------------
+  # JOBS DE BUILD: Uno por microservicio
+  # Estos jobs SÓLO se ejecutan si el job 'changes' les da luz verde
+  # -----------------------------------------------------------------
+
+  build-dashboard:
+    needs: changes
+    if: needs.changes.outputs.dashboard == 'true' || github.event_name == 'workflow_dispatch'
+    uses: ./.github/workflows/reusable-build-push.yml
+    secrets: inherit
+    with:
+      service-name: dashboard-service
+      service-path: ./dashboard-service
+
+  build-profile:
+    needs: changes
+    if: needs.changes.outputs.profile == 'true' || github.event_name == 'workflow_dispatch'
+    uses: ./.github/workflows/reusable-build-push.yml
+    secrets: inherit
+    with:
+      service-name: profile-service
+      service-path: ./profile-service
+
+  build-file:
+    needs: changes
+    if: needs.changes.outputs.file == 'true' || github.event_name == 'workflow_dispatch'
+    uses: ./.github/workflows/reusable-build-push.yml
+    secrets: inherit
+    with:
+      service-name: file-service
+      service-path: ./file-service
+
+  build-gateway:
+    needs: changes
+    if: needs.changes.outputs.gateway == 'true' || github.event_name == 'workflow_dispatch'
+    uses: ./.github/workflows/reusable-build-push.yml
+    secrets: inherit
+    with:
+      service-name: profile-gateway
+      service-path: ./profile-gateway
+
+ 

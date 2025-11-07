@@ -1,15 +1,17 @@
-# 1. Usar una imagen base ligera de Node.js
-FROM node:18-alpine
+# --- 1. Imagen base ligera ---
+FROM node:20-alpine
 
-# 2. Establecer el directorio de trabajo
+# --- 2. Directorio de trabajo ---
 WORKDIR /app
 
-# 3. Copiar archivos de dependencias e instalar
-COPY package.json ./
-RUN npm install --production
+# --- 3. Copiar archivos de dependencias ---
+COPY package.json package-lock.json ./
 
-# 4. Copiar el código de la aplicación
-COPY index.js .
+# --- 4. Instalar dependencias reproducibles ---
+RUN npm ci --only=production
 
-# 6. Comando para arrancar el servicio
+# --- 5. Copiar el código de la aplicación ---
+COPY index.js ./
+
+# --- 6. Comando de inicio ---
 CMD ["node", "index.js"]
