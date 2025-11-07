@@ -18,9 +18,9 @@ jobs:
     outputs:
       # Exporta una variable booleana (true/false) para cada microservicio
       # El nombre (ej: "auth") debe ser único y lo usaremos abajo
-      dashboard: ${{ steps.filter.outputs.dashboard }}
-      profile: ${{ steps.filter.outputs.profile }}
-      file: ${{ steps.filter.outputs.file }}
+      categorization: ${{ steps.filter.outputs.dashboard }}
+      projects: ${{ steps.filter.outputs.profile }}
+      searching: ${{ steps.filter.outputs.file }}
       gateway: ${{ steps.filter.outputs.gateway }}
     
     steps:
@@ -30,46 +30,46 @@ jobs:
         id: filter
         with:
           filters: |
-            dashboard:
-              - 'dashboard-service/**'
-            profile:
-              - 'profile-service/**'
-            file:
-              - 'file-service/**'
+            categorization:
+              - 'categorization-service/**'
+            projects:
+              - 'projects-service/**'
+            searching:
+              - 'searching-service/**'
             gateway:
-              - 'profile-gateway/**'
+              - 'projects-gateway/**'
          
   # -----------------------------------------------------------------
   # JOBS DE BUILD: Uno por microservicio
   # Estos jobs SÓLO se ejecutan si el job 'changes' les da luz verde
   # -----------------------------------------------------------------
 
-  build-dashboard:
+  build-categorization:
     needs: changes
-    if: needs.changes.outputs.dashboard == 'true' || github.event_name == 'workflow_dispatch'
+    if: needs.changes.outputs.categorization == 'true' || github.event_name == 'workflow_dispatch'
     uses: ./.github/workflows/reusable-build-push.yml
     secrets: inherit
     with:
-      service-name: dashboard-service
-      service-path: ./dashboard-service
+      service-name: categorization-service
+      service-path: ./categorization-service
 
-  build-profile:
+  build-projects:
     needs: changes
-    if: needs.changes.outputs.profile == 'true' || github.event_name == 'workflow_dispatch'
+    if: needs.changes.outputs.projects == 'true' || github.event_name == 'workflow_dispatch'
     uses: ./.github/workflows/reusable-build-push.yml
     secrets: inherit
     with:
-      service-name: profile-service
-      service-path: ./profile-service
+      service-name: projects-service
+      service-path: ./projects-service
 
-  build-file:
+  build-searching:
     needs: changes
-    if: needs.changes.outputs.file == 'true' || github.event_name == 'workflow_dispatch'
+    if: needs.changes.outputs.searching == 'true' || github.event_name == 'workflow_dispatch'
     uses: ./.github/workflows/reusable-build-push.yml
     secrets: inherit
     with:
-      service-name: file-service
-      service-path: ./file-service
+      service-name: searching-service
+      service-path: ./searching-service
 
   build-gateway:
     needs: changes
@@ -77,7 +77,7 @@ jobs:
     uses: ./.github/workflows/reusable-build-push.yml
     secrets: inherit
     with:
-      service-name: profile-gateway
-      service-path: ./profile-gateway
+      service-name: projects-gateway
+      service-path: ./projects-gateway
 
  
