@@ -1,116 +1,51 @@
 package com.udeajobs.projects_cell.searching_service.repository;
 
 import com.udeajobs.projects_cell.searching_service.entity.ProjectDocument;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.elasticsearch.annotations.Query;
-import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.opensearch.client.opensearch.OpenSearchClient;
+import org.opensearch.client.opensearch.core.*;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import java.io.IOException;
 import java.util.Optional;
 
-/**
- * Repositorio para operaciones de búsqueda en Elasticsearch de proyectos.
- * <p>
- * Proporciona métodos de búsqueda personalizados utilizando
- * Spring Data Elasticsearch.
- * </p>
- *
- * @author UdeAJobs Team
- * @version 1.0
- * @since 2025-11-04
- */
+@Slf4j
 @Repository
-public interface ProjectRepository extends ElasticsearchRepository<ProjectDocument, String> {
+@RequiredArgsConstructor
+public class OpenSearchProjectRepository {
 
-    /**
-     * Busca un proyecto por su UUID.
-     *
-     * @param projectId UUID del proyecto como String
-     * @return Optional con el proyecto si existe
-     */
-    Optional<ProjectDocument> findByProjectId(String projectId);
+    private static final String INDEX = "projects";
 
-    /**
-     * Busca proyectos por estado con paginación.
-     *
-     * @param status estado del proyecto
-     * @param pageable información de paginación
-     * @return página de proyectos
-     */
-    Page<ProjectDocument> findByStatus(String status, Pageable pageable);
+    private final OpenSearchClient client;
 
-    /**
-     * Busca proyectos por categoría principal.
-     *
-     * @param mainCategory categoría principal
-     * @param pageable información de paginación
-     * @return página de proyectos
-     */
-    Page<ProjectDocument> findByMainCategory(String mainCategory, Pageable pageable);
+    public void save(ProjectDocument document) throws IOException {
+        IndexResponse response = client.index(i -> i
+                .index(INDEX)
+                .id(document.getId())
+                .document(document)
+        );
 
-    /**
-     * Busca proyectos que contengan una habilidad específica.
-     *
-     * @param skill habilidad a buscar
-     * @param pageable información de paginación
-     * @return página de proyectos
-     */
-    Page<ProjectDocument> findByRequiredSkillsContaining(String skill, Pageable pageable);
+        log.debug("Index response: {}", response.result());
+    }
 
-    /**
-     * Busca proyectos por ubicación (búsqueda de texto completo).
-     *
-     * @param location ubicación
-     * @param pageable información de paginación
-     * @return página de proyectos
-     */
-    Page<ProjectDocument> findByLocationContaining(String location, Pageable pageable);
+    public Optional<ProjectDocument> findByProjectId(String projectId) throws IOException {
+        GetResponse<ProjectDocument> response = client.get(g -> g
+                        .index(INDEX)
+                        .id(projectId),
+                ProjectDocument.class
+        );
 
-    /**
-     * Busca proyectos remotos.
-     *
-     * @param isRemote true si es remoto
-     * @param pageable información de paginación
-     * @return página de proyectos
-     */
-    Page<ProjectDocument> findByIsRemote(Boolean isRemote, Pageable pageable);
+        if (!response.found()) return Optional.empty();
+        return Optional.of(response.source());
+    }
 
-    /**
-     * Busca proyectos por nivel de trabajo.
-     *
-     * @param jobLevel nivel del trabajo
-     * @param pageable información de paginación
-     * @return página de proyectos
-     */
-    Page<ProjectDocument> findByJobLevel(String jobLevel, Pageable pageable);
+    public void deleteByProjectId(String projectId) throws IOException {
+        DeleteResponse response = client.delete(d -> d
+                .index(INDEX)
+                .id(projectId)
+        );
 
-    /**
-     * Busca proyectos dentro de un rango salarial.
-     *
-     * @param minSalary salario mínimo
-     * @param maxSalary salario máximo
-     * @param pageable información de paginación
-     * @return página de proyectos
-     */
-    @Query("{\"bool\": {\"must\": [{\"range\": {\"maxSalary\": {\"gte\": \"?0\"}}}, {\"range\": {\"minSalary\": {\"lte\": \"?1\"}}}]}}")
-    Page<ProjectDocument> findBySalaryRange(Double minSalary, Double maxSalary, Pageable pageable);
-
-    /**
-     * Busca proyectos que contengan alguno de los tags especificados.
-     *
-     * @param tags lista de tags
-     * @param pageable información de paginación
-     * @return página de proyectos
-     */
-    Page<ProjectDocument> findByTagsIn(List<String> tags, Pageable pageable);
-
-    /**
-     * Elimina un proyecto por su UUID.
-     *
-     * @param projectId UUID del proyecto como String
-     */
-    void deleteByProjectId(String projectId);
+        log.debug("Delete response: {}", response.result());
+    }
 }
-
