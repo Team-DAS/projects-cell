@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -102,7 +103,7 @@ public class ProjectIndexingService {
      *
      * @param eventDTO datos del proyecto
      */
-    private void createProject(ProjectEventDTO eventDTO) {
+    private void createProject(ProjectEventDTO eventDTO) throws IOException {
         ProjectDocument document = mapEventToDocument(eventDTO);
         document.setIndexedAt(LocalDateTime.now());
 
@@ -117,7 +118,7 @@ public class ProjectIndexingService {
      *
      * @param eventDTO datos actualizados del proyecto
      */
-    private void updateProject(ProjectEventDTO eventDTO) {
+    private void updateProject(ProjectEventDTO eventDTO) throws IOException {
         Optional<ProjectDocument> existingProject = projectRepository.findByProjectId(eventDTO.getProjectId().toString());
 
         ProjectDocument document;
@@ -143,7 +144,7 @@ public class ProjectIndexingService {
      *
      * @param projectId UUID del proyecto
      */
-    private void deleteProject(java.util.UUID projectId) {
+    private void deleteProject(java.util.UUID projectId) throws IOException {
         projectRepository.deleteByProjectId(projectId.toString());
 
         meterRegistry.counter("projects.indexing.deleted").increment();

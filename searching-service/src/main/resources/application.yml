@@ -2,12 +2,9 @@ spring:
   application:
     name: searching-service
 
-  # Configuración de Elasticsearch
-  elasticsearch:
-    uris: ${ELASTICSEARCH_HOST:http://localhost:9200}
-
   # Configuración de RabbitMQ (para el consumidor)
   rabbitmq:
+    addresses: ${RABBITMQ_ADDRESSES}
     host: ${RABBITMQ_HOST:localhost}
     port: ${RABBITMQ_PORT:5672}
     username: ${RABBITMQ_USER:guest}
@@ -21,11 +18,13 @@ spring:
           initial-interval: 3000
           max-attempts: 3
           multiplier: 2
+    addresses: ${RABBITMQ_ADDRESSES:localhost:5672}
 
   # Configuración de GraphQL
   graphql:
     graphiql:
-      enabled: false
+      enabled: true
+      path: /playground
 server:
   port: 8080
   forward-headers-strategy: native
@@ -38,10 +37,14 @@ management:
       exposure:
         include: health,info,metrics,prometheus
 
+# Configuración de OpenSearch (compatible con Elasticsearch API)
+opensearch:
+  host: ${OPENSEARCH_HOST:udeajobs-elastic-1jbjmgsc.us-east-1.bonsaisearch.net}
+  user: ${OPEANSEARCH_USER:95b7f98712}
+  password: ${OPENSEARCH_PASSWORD:8b579291f6edfad359e1}
+
 # Configuración específica de la aplicación
 app:
-  elasticsearch:
-    index-name: ${ELASTICSEARCH_INDEX_NAME:projects}
   rabbitmq:
     queues:
       project-events: ${PROJECT_QUEUE:project.events.queue}

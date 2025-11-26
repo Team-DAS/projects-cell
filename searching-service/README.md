@@ -2,12 +2,12 @@
 
 ## 📋 Descripción del Proyecto
 
-**Searching Service** es un microservicio especializado en búsquedas rápidas y eficientes de proyectos para la plataforma UdeAJobs. Utiliza **Elasticsearch** como motor de búsqueda y proporciona una API GraphQL para consultas flexibles.
+**Searching Service** es un microservicio especializado en búsquedas rápidas y eficientes de proyectos para la plataforma UdeAJobs. Utiliza **OpenSearch v2.19** como motor de búsqueda y proporciona una API GraphQL para consultas flexibles.
 
 ### 🎯 Propósito
 
 Este servicio es parte de la célula de proyectos (projects-cell) y se encarga de:
-- Indexar proyectos en Elasticsearch para búsquedas rápidas
+- Indexar proyectos en OpenSearch para búsquedas rápidas
 - Proporcionar búsquedas complejas con múltiples filtros
 - Consumir eventos de RabbitMQ para mantener el índice sincronizado
 - Enriquecer proyectos con información de categorización
@@ -17,7 +17,7 @@ Este servicio es parte de la célula de proyectos (projects-cell) y se encarga d
 ### Componentes Principales
 
 1. **GraphQL API** - Expone queries para búsqueda de proyectos
-2. **Elasticsearch** - Motor de búsqueda e indexación
+2. **OpenSearch v2.19** - Motor de búsqueda e indexación (compatible con Elasticsearch 7.x API)
 3. **RabbitMQ Consumers** - Escuchan eventos de proyectos y categorización
 4. **Prometheus Metrics** - Monitoreo y métricas del servicio
 
@@ -30,7 +30,7 @@ Este servicio es parte de la célula de proyectos (projects-cell) y se encarga d
                                     [Indexing Service]
                                            |
                                            v
-                                    [Elasticsearch]
+                                      [OpenSearch]
                                            ^
                                            |
 [Clientes] ---> [GraphQL API] ---> [Search Service]
@@ -96,112 +96,7 @@ Enriquece proyectos con:
    - Puerto por defecto: `5672`
    - Management UI: `15672`
 
-### Opcional
-- **Docker & Docker Compose** (para ejecutar dependencias fácilmente)
-- **Gradle** (no es necesario, se usa el wrapper incluido)
-
-## 🔧 Configuración
-
-### Variables de Entorno
-
-Crea un archivo `.env` o configura las siguientes variables:
-
-```bash
-# Elasticsearch
-ELASTICSEARCH_HOST=http://localhost:9200
-ELASTICSEARCH_INDEX_NAME=projects
-
-# RabbitMQ
-RABBITMQ_HOST=localhost
-RABBITMQ_PORT=5672
-RABBITMQ_USER=guest
-RABBITMQ_PASSWORD=guest
-RABBITMQ_PROJECT_QUEUE=project.events.queue
-RABBITMQ_CATEGORIZATION_QUEUE=project.categorization.queue
-RABBITMQ_PROJECT_EXCHANGE=project.events.exchange
-RABBITMQ_CATEGORIZATION_EXCHANGE=project.categorization.exchange
-RABBITMQ_PROJECT_ROUTING_KEY=project.events
-RABBITMQ_CATEGORIZATION_ROUTING_KEY=project.categorization
-
-# Servidor
-SERVER_PORT=8083
-```
-
-### Configuración con Docker Compose (Recomendado)
-
-Ya existe un archivo `docker-compose.yml` en el proyecto que levanta:
-- Elasticsearch en el puerto 9200
-- RabbitMQ en los puertos 5672 (AMQP) y 15672 (Management UI)
-
-## 🏃 Cómo Ejecutar el Proyecto
-
-### Opción 1: Con Docker Compose (Recomendado)
-
-1. **Inicia las dependencias (Elasticsearch y RabbitMQ)**
-   ```bash
-   docker-compose up -d
-   ```
-
-2. **Verifica que los servicios estén corriendo**
-   ```bash
-   # Elasticsearch
-   curl http://localhost:9200
-   
-   # RabbitMQ Management UI
-   # Abre en navegador: http://localhost:15672
-   # Usuario: guest, Password: guest
-   ```
-
-3. **Compila y ejecuta el servicio**
-   ```bash
-   ./gradlew bootRun
-   ```
-
-### Opción 2: Sin Docker
-
-1. **Instala y ejecuta Elasticsearch localmente**
-   - Descarga desde: https://www.elastic.co/downloads/elasticsearch
-   - Inicia: `bin/elasticsearch`
-
-2. **Instala y ejecuta RabbitMQ localmente**
-   - Descarga desde: https://www.rabbitmq.com/download.html
-   - Inicia: `rabbitmq-server`
-
-3. **Configura las variables de entorno** según tus instalaciones
-
-4. **Compila y ejecuta el servicio**
-   ```bash
-   ./gradlew bootRun
-   ```
-
-### Opción 3: Ejecutar como JAR
-
-```bash
-# Compila el proyecto
-./gradlew clean build
-
-# Ejecuta el JAR
-java -jar build/libs/searching-service-0.0.1-SNAPSHOT.jar
-```
-
-## 🧪 Verificación del Servicio
-
-### 1. Health Check
-```bash
-curl http://localhost:8083/actuator/health
-```
-
-Respuesta esperada:
-```json
-{
-  "status": "UP",
-  "components": {
-    "elasticsearch": {"status": "UP"},
-    "rabbit": {"status": "UP"}
-  }
-}
-```
-
+    
 ### 2. GraphiQL Interface
 
 Abre en tu navegador: **http://localhost:8083/graphiql**
@@ -338,15 +233,19 @@ query {
 
 ## 🐛 Troubleshooting
 
-### Problema: Elasticsearch no conecta
+### Problema: OpenSearch no conecta
 ```bash
-# Verifica que Elasticsearch esté corriendo
+# Verifica que OpenSearch esté corriendo
 curl http://localhost:9200
+# Debe devolver información del cluster con "distribution": "opensearch"
 
 # Verifica los logs del servicio
 tail -f logs/searching-service.log
 
-# Solución: Verifica las credenciales y URL en application.yml
+# Verifica el contenedor si usas Docker
+docker logs opensearch-container
+
+# Solución: Verifica la URL en application.yml (OPENSEARCH_HOST)
 ```
 
 ### Problema: RabbitMQ no recibe mensajes
@@ -414,13 +313,14 @@ scrape_configs:
 
 ### Escalabilidad
 - El servicio es stateless y puede escalarse horizontalmente
-- Elasticsearch puede configurarse en cluster para alta disponibilidad
+- OpenSearch puede configurarse en cluster para alta disponibilidad
 - RabbitMQ soporta múltiples consumers para procesamiento paralelo
 
 ### Seguridad
-- En producción, configura autenticación para Elasticsearch
+- En producción, habilita el Security Plugin de OpenSearch
 - Usa credenciales seguras para RabbitMQ
 - Considera añadir autenticación/autorización a la API GraphQL
+- OpenSearch soporta TLS/SSL para conexiones seguras
 
 ## 👥 Autor
 

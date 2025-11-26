@@ -13,7 +13,7 @@ import java.util.Optional;
 @Slf4j
 @Repository
 @RequiredArgsConstructor
-public class OpenSearchProjectRepository {
+public class ProjectRepository {
 
     private static final String INDEX = "projects";
 

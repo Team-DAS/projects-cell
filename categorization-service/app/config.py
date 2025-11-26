@@ -8,8 +8,9 @@ class Settings(BaseSettings):
     """
     
     # --- RabbitMQ ---
-    # Dirección del servidor RabbitMQ (ej. 'rabbitmq-service' en Kubernetes)
-    RABBITMQ_HOST: str = "localhost"
+    # URL completa de conexión AMQP (incluye usuario, contraseña, host, puerto)
+    # Formato: amqp://usuario:contraseña@host:puerto/
+    RABBITMQ_URL: str = "amqp://guest:guest@localhost:5672/"
     
     # El exchange que tu servicio Java está usando
     PROJECT_EXCHANGE: str = "project.events.exchange"

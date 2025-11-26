@@ -1,222 +1,47 @@
-# Esquema GraphQL para el servicio de búsqueda de proyectos
-
-"""
-Query principal para operaciones de búsqueda
-"""
 type Query {
-    """
-    Busca proyectos según múltiples criterios con paginación
-    """
     searchProjects(input: ProjectSearchInput!): ProjectSearchResponse!
-
-    """
-    Busca un proyecto específico por su ID
-    """
     findProjectById(projectId: ID!): ProjectResponse!
 }
 
-"""
-Input para búsqueda de proyectos con múltiples filtros
-"""
 input ProjectSearchInput {
-    """
-    Término de búsqueda general (busca en título y descripción)
-    """
     searchTerm: String
-
-    """
-    Lista de habilidades requeridas
-    """
-    requiredSkills: [String!]
-
-    """
-    Ubicación del proyecto
-    """
-    location: String
-
-    """
-    Filtro para proyectos remotos
-    """
-    isRemote: Boolean
-
-    """
-    Salario mínimo
-    """
-    minSalary: Float
-
-    """
-    Salario máximo
-    """
-    maxSalary: Float
-
-    """
-    Moneda del salario (USD, EUR, COP, etc.)
-    """
-    currency: String
-
-    """
-    Nivel del trabajo (JUNIOR, SEMI_SENIOR, SENIOR, etc.)
-    """
-    jobLevel: String
-
-    """
-    Estado del proyecto (DRAFT, PUBLISHED, CLOSED, etc.)
-    """
     status: String
 
-    """
-    Categoría principal del proyecto
-    """
-    mainCategory: String
-
-    """
-    Etiquetas para filtrar
-    """
-    tags: [String!]
-
-    """
-    Número de página (comienza en 0)
-    """
     page: Int = 0
-
-    """
-    Tamaño de la página (máximo 100)
-    """
     size: Int = 10
 
-    """
-    Campo por el cual ordenar (createdAt, updatedAt, title, minSalary, maxSalary)
-    """
-    sortBy: String
-
-    """
-    Dirección del ordenamiento (ASC, DESC)
-    """
-    sortDirection: String
+    sortDirection: String = "ASC"
 }
 
-"""
-Respuesta paginada de búsqueda de proyectos
-"""
 type ProjectSearchResponse {
-    """
-    Lista de proyectos encontrados
-    """
     projects: [ProjectResponse!]!
 
-    """
-    Número de página actual
-    """
     currentPage: Int!
-
-    """
-    Tamaño de la página
-    """
     pageSize: Int!
 
-    """
-    Total de elementos encontrados
-    """
     totalElements: Int!
-
-    """
-    Total de páginas disponibles
-    """
     totalPages: Int!
 
-    """
-    Indica si hay una página siguiente
-    """
     hasNext: Boolean!
-
-    """
-    Indica si hay una página anterior
-    """
     hasPrevious: Boolean!
 }
 
-"""
-Representación de un proyecto en los resultados de búsqueda
-"""
 type ProjectResponse {
-    """
-    Identificador único del proyecto
-    """
     projectId: ID!
-
-    """
-    Identificador del empleador
-    """
     employerId: ID!
-
-    """
-    Título del proyecto
-    """
     title: String!
-
-    """
-    Descripción del proyecto
-    """
     description: String
-
-    """
-    Estado del proyecto
-    """
     status: String!
 
-    """
-    Salario mínimo ofrecido
-    """
     minSalary: Float
-
-    """
-    Salario máximo ofrecido
-    """
     maxSalary: Float
-
-    """
-    Moneda del salario
-    """
     currency: String
 
-    """
-    Ubicación del proyecto
-    """
     location: String
-
-    """
-    Indica si el proyecto es remoto
-    """
     isRemote: Boolean
 
-    """
-    Habilidades requeridas
-    """
     requiredSkills: [String!]
-
-    """
-    Nivel del trabajo
-    """
     jobLevel: String
-
-    """
-    Categoría principal del proyecto
-    """
     mainCategory: String
-
-    """
-    Etiquetas del proyecto
-    """
     tags: [String!]
-
-    """
-    Fecha de creación
-    """
-    createdAt: String
-
-    """
-    Fecha de actualización
-    """
-    updatedAt: String
 }
-

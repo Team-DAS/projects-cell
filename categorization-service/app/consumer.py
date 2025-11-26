@@ -29,8 +29,8 @@ class RabbitMQConsumer:
         while True:
             try:
                 # 1. Crear conexión
-                log.info(f"Conectando a RabbitMQ en {settings.RABBITMQ_HOST}...")
-                params = pika.ConnectionParameters(host=settings.RABBITMQ_HOST)
+                log.info(f"Conectando a RabbitMQ con URL: {settings.RABBITMQ_URL}")
+                params = pika.URLParameters(settings.RABBITMQ_URL)
                 self.connection = pika.BlockingConnection(params)
                 
                 # 2. Crear un canal

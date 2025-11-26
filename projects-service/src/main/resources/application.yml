@@ -10,6 +10,7 @@ spring:
     hibernate:
       ddl-auto: update
   rabbitmq:
+    addresses: ${SPRING_RABBITMQ_ADDRESSES}
     host: ${SPRING_RABBITMQ_HOST}
     port: ${SPRING_RABBITMQ_PORT}
     username: ${SPRING_RABBITMQ_USERNAME}
