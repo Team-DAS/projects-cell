@@ -4,7 +4,7 @@ spring:
 
   # Configuración de RabbitMQ (para el consumidor)
   rabbitmq:
-    addresses: ${RABBITMQ_ADDRESSES}
+    addresses: ${RABBITMQ_ADDRESSES:localhost:5672}
     host: ${RABBITMQ_HOST:localhost}
     port: ${RABBITMQ_PORT:5672}
     username: ${RABBITMQ_USER:guest}
@@ -18,7 +18,7 @@ spring:
           initial-interval: 3000
           max-attempts: 3
           multiplier: 2
-    addresses: ${RABBITMQ_ADDRESSES:localhost:5672}
+   
 
   # Configuración de GraphQL
   graphql:
