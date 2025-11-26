@@ -40,7 +40,7 @@ management:
 # Configuración de OpenSearch (compatible con Elasticsearch API)
 opensearch:
   host: ${OPENSEARCH_HOST:udeajobs-elastic-1jbjmgsc.us-east-1.bonsaisearch.net}
-  user: ${OPEANSEARCH_USER:95b7f98712}
+  user: ${OPENSEARCH_USER:95b7f98712}
   password: ${OPENSEARCH_PASSWORD:8b579291f6edfad359e1}
 
 # Configuración específica de la aplicación
