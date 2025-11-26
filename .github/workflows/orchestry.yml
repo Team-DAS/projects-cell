@@ -18,9 +18,9 @@ jobs:
     outputs:
       # Exporta una variable booleana (true/false) para cada microservicio
       # El nombre (ej: "auth") debe ser único y lo usaremos abajo
-      categorization: ${{ steps.filter.outputs.dashboard }}
-      projects: ${{ steps.filter.outputs.profile }}
-      searching: ${{ steps.filter.outputs.file }}
+      categorization: ${{ steps.filter.outputs.categorization }}
+      projects: ${{ steps.filter.outputs.projects }}
+      searching: ${{ steps.filter.outputs.searching }}
       gateway: ${{ steps.filter.outputs.gateway }}
     
     steps:
