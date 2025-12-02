@@ -17,72 +17,20 @@ if (!PROJECTS_SERVICE_URL || !SEARCHING_SERVICE_URL) {
   process.exit(1);
 }
 
-// --- 2. HTML del GraphQL Playground ---
-const playgroundHTML = `
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>GraphQL Playground - Projects</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/graphql-playground-react/build/static/css/index.css" />
-  <link rel="shortcut icon" href="https://cdn.jsdelivr.net/npm/graphql-playground-react/build/favicon.png" />
-  <script src="https://cdn.jsdelivr.net/npm/graphql-playground-react/build/static/js/middleware.js"></script>
-</head>
-<body>
-  <div id="root"></div>
-  <script>
-    window.addEventListener('load', function (event) {
-      GraphQLPlayground.init(document.getElementById('root'), {
-        endpoint: '/projects-cell/api/v1/projects/graphql',
-        settings: {
-          'request.credentials': 'same-origin',
-        },
-        tabs: [
-          {
-            endpoint: '/projects-cell/api/v1/projects/graphql',
-            query: '# Bienvenido al GraphQL Playground\\n# Escribe tus queries aquí\\n\\nquery {\\n  # Tu query aquí\\n}',
-          },
-        ],
-      })
-    })
-  </script>
-</body>
-</html>
-`;
-
 // --- 3. Registro de Rutas ---
 
-
-fastify.get('/projects-cell/api/v1/projects/playground', async (request, reply) => {
-  reply.type('text/html').send(playgroundHTML);
-});
 
 
 fastify.register(httpProxy, {
   upstream: SEARCHING_SERVICE_URL,
-  prefix: '/projects-cell/api/v1/projects/graphql',
-  rewritePrefix: '/graphql',
-  replyOptions: {
-    rewriteRequestHeaders: (originalReq, headers) => ({
-      ...headers,
-      'x-forwarded-host': originalReq.headers.host,
-      'x-forwarded-proto': originalReq.headers['x-forwarded-proto'] || 'http',
-    })
-  }
+  prefix: '/projects-cell/projects/graphql',  // <-- URL pública simple
+  rewritePrefix: '/graphql',  // <-- URL interna
 });
 
 fastify.register(httpProxy, {
   upstream: PROJECTS_SERVICE_URL,
-  prefix: '/projects-cell/api/v1/projects',
-  rewritePrefix: '/api/v1/projects',
-  replyOptions: {
-    rewriteRequestHeaders: (originalReq, headers) => ({
-      ...headers,
-      'x-forwarded-host': originalReq.headers.host,
-      'x-forwarded-proto': originalReq.headers['x-forwarded-proto'] || 'http',
-    })
-  }
+  prefix: '/projects-cell/projects',  // <-- URL pública simple
+  rewritePrefix: '/api/v1/projects',  // <-- URL interna con versión
 });
 
 // --- 4. Iniciar el Servidor ---
