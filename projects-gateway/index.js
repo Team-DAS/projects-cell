@@ -33,6 +33,13 @@ fastify.register(httpProxy, {
   rewritePrefix: '/playground',  // <-- URL interna
 });
 
+// Ruta adicional para capturar redirecciones de playground (solución temporal)
+fastify.register(httpProxy, {
+  upstream: SEARCHING_SERVICE_URL,
+  prefix: '/playground',
+  rewritePrefix: '/playground',
+});
+
 fastify.register(httpProxy, {
   upstream: PROJECTS_SERVICE_URL,
   prefix: '/projects-cell/projects',  // <-- URL pública simple
