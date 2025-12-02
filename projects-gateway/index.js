@@ -28,6 +28,12 @@ fastify.register(httpProxy, {
 });
 
 fastify.register(httpProxy, {
+  upstream: SEARCHING_SERVICE_URL,
+  prefix: '/projects-cell/projects/playground',  // <-- URL pública simple
+  rewritePrefix: '/playground',  // <-- URL interna
+});
+
+fastify.register(httpProxy, {
   upstream: PROJECTS_SERVICE_URL,
   prefix: '/projects-cell/projects',  // <-- URL pública simple
   rewritePrefix: '/api/v1/projects',  // <-- URL interna con versión
